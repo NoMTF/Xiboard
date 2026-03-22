@@ -294,6 +294,8 @@ class Keyboard(
                 key.keySymbolOffsetY = firstNonZero(textKey.keySymbolOffsetY, selfConfig.keySymbolOffsetY, theme.generalStyle.keySymbolOffsetY)
                 key.keyHintOffsetX = firstNonZero(textKey.keyHintOffsetX, selfConfig.keyHintOffsetX, theme.generalStyle.keyHintOffsetX)
                 key.keyHintOffsetY = firstNonZero(textKey.keyHintOffsetY, selfConfig.keyHintOffsetY, theme.generalStyle.keyHintOffsetY)
+                key.keyPressOffsetX = firstNonZero(textKey.keyPressOffsetX, selfConfig.keyPressOffsetX, theme.generalStyle.keyPressOffsetX)
+                key.keyPressOffsetY = firstNonZero(textKey.keyPressOffsetY, selfConfig.keyPressOffsetY, theme.generalStyle.keyPressOffsetY)
 
                 key.x = xPos
                 key.y = yPos
