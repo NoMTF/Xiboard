@@ -267,11 +267,15 @@ class InputView(
         info: EditorInfo,
         restarting: Boolean = false,
     ) {
+        updateEnterKeyLabel(info)
         broadcaster.onStartInput(info)
-        enterKeyDisplay.updateLabelOnEditorInfo(info)
         if (!restarting) {
             windowManager.attachWindow(KeyboardWindow)
         }
+    }
+
+    fun updateEnterKeyLabel(info: EditorInfo) {
+        enterKeyDisplay.updateLabelOnEditorInfo(info)
     }
 
     override fun handleRimeMessage(it: RimeMessage<*>) {

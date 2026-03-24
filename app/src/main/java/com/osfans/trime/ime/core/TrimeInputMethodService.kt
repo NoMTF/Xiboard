@@ -281,6 +281,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         navBarManager.evaluate(window.window!!)
         replaceInputView(theme)
         replaceCandidateView(theme)
+        inputView?.updateEnterKeyLabel(currentInputEditorInfo)
     }
 
     override fun onDestroy() {
