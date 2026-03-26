@@ -103,9 +103,9 @@ class KeyView(
                     popup.listener.onPopupAction(triggerAction)
                     triggerAction.outAction?.let { action ->
                         keyboardActionListener.onAction(KeyAction(action))
-                        setPressedState(false)
                         dismissPopupPreview()
                     }
+                    setPressedState(false)
                 } else if (isRepeatable) {
                     key.getAction(KeyBehavior.CLICK)?.let { processKeyAction(it, KeyBehavior.CLICK) }
                 }
