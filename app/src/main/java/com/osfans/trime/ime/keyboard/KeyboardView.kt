@@ -88,6 +88,10 @@ class KeyboardView(
         children.forEach { it.invalidate() }
     }
 
+    fun invalidateKeyByIndex(index: Int) {
+        getChildAt(index)?.invalidate()
+    }
+
     val isCapsOn: Boolean
         get() = keyboard.mShiftKey?.isOn == true
 

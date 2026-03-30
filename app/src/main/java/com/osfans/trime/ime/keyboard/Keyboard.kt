@@ -83,7 +83,7 @@ class Keyboard(
 
     /** List of keys in this keyboard  */
     private val mKeys = mutableListOf<Key>()
-    val composingKeys = mutableListOf<Key>()
+    val appearanceStateKeys = mutableListOf<Key>()
     var modifier = 0
         private set
 
@@ -322,7 +322,8 @@ class Keyboard(
 
             height = yPos + currentRowHeight
 
-            for (key in mKeys) {
+            mKeys.forEachIndexed { index, key ->
+                key.index = index
                 if (key.column == 0) key.edgeFlags = key.edgeFlags or EDGE_LEFT
                 if (key.row == 0) key.edgeFlags = key.edgeFlags or EDGE_TOP
                 if (key.row == row) key.edgeFlags = key.edgeFlags or EDGE_BOTTOM

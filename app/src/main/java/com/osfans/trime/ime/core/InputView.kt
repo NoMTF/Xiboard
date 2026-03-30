@@ -117,6 +117,19 @@ class InputView(
             return dp(value)
         }
 
+    private var lastAppearanceState = Triple(false, false, false)
+
+    private fun broadcastKeyAppearanceUpdate() {
+        val composing = rime.run { statusCached.isComposing }
+        val hasMenu = rime.run { hasMenu }
+        val paging = rime.run { paging }
+        val current = Triple(composing, hasMenu, paging)
+        if (current != lastAppearanceState) {
+            lastAppearanceState = current
+            broadcaster.onKeyAppearanceUpdate(current.first, current.second, current.third)
+        }
+    }
+
     private val keyboardBottomPaddingPx: Int
         get() {
             val value =
@@ -317,6 +330,7 @@ class InputView(
             }
             else -> {}
         }
+        broadcastKeyAppearanceUpdate()
     }
 
     fun updateSelection(
