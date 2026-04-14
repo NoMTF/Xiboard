@@ -242,9 +242,9 @@
           "type": "boolean",
           "description": "按鍵糾錯"
         },
-        "reset_ascii_mode": {
+        "reset_ascii_mode_on_focus_change": {
           "type": "boolean",
-          "description": "顯示鍵盤時重置爲中文狀態"
+          "description": "焦点变更弹起输入法软键盘时，重置 ascii_mode"
         },
         "round_corner": {
           "type": "number",

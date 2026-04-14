@@ -140,7 +140,7 @@ data class TextKeyboard(
             keyBorder = node["key_border"]?.int ?: -1,
             columns = node["columns"]?.int ?: 30,
             asciiMode = (node["ascii_mode"]?.int ?: 1) == 1,
-            resetAsciiMode = node["reset_ascii_mode"]?.boolean ?: true,
+            resetAsciiMode = node["reset_ascii_mode"]?.boolean ?: false,
             labelTransform = node["label_transform"]?.enum<LabelTransform>() ?: LabelTransform.NONE,
             lock = node["lock"]?.boolean ?: false,
             asciiKeyboard = node["ascii_keyboard"]?.string ?: "",

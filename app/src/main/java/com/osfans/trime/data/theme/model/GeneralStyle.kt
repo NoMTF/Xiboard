@@ -66,7 +66,7 @@ data class GeneralStyle(
     val popupKeyHeight: Int,
     val popupFont: List<String>,
     val popupTextSize: Float,
-    val resetASCIIMode: Boolean,
+    val resetAsciiModeOnFocusChange: Boolean,
     val roundCorner: Float,
     val shadowRadius: Float,
     val symbolFont: List<String>,
@@ -162,7 +162,7 @@ data class GeneralStyle(
             popupFont = node["popup_font"]?.sequence
                 ?.mapNotNull(Node::string) ?: emptyList(),
             popupTextSize = node["popup_text_size"]?.float ?: 0f,
-            resetASCIIMode = node["reset_ascii_mode"]?.boolean ?: false,
+            resetAsciiModeOnFocusChange = node["reset_ascii_mode_on_focus_change"]?.boolean ?: false,
             roundCorner = node["round_corner"]?.float ?: 0f,
             shadowRadius = node["shadow_radius"]?.float ?: 0f,
             symbolFont = node["symbol_font"]?.sequence

@@ -57,7 +57,7 @@ style:
   popup_bottom_margin: 68 #按键提示底边距
   popup_key_height: 48 #按键提示内键高度
   popup_text_size: 23 #按键提示字号
-  reset_ascii_mode: false #显示键盘时重置为中文状态
+  reset_ascii_mode_on_focus_change: false #焦点变更弹起输入法软键盘时，重置 ascii_mode
   round_corner: *round1 #按键圆角半径
   shadow_radius: 0.0 #按键阴影半径
   symbol_font: symbol.ttf #符号字体
