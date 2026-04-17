@@ -222,10 +222,13 @@ class CandidatesView(
         background =
             ColorManager.getDecorDrawable(
                 colorKey = "text_back_color",
+                borderColorKey = "candidate_border_color",
+                borderPx = dp(theme.window.border),
                 cornerRadius = dp(theme.window.cornerRadius),
             )
         clipToOutline = true
         outlineProvider = ViewOutlineProvider.BACKGROUND
+        elevation = dp(theme.window.shadow)
         add(
             preeditUi.root,
             lParams(wrapContent, wrapContent) {

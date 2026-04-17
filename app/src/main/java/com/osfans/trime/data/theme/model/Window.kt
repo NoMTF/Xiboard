@@ -18,6 +18,8 @@ data class Window(
     val itemPadding: Padding = Padding(2, 4),
     val minWidth: Int = 0,
     val cornerRadius: Float = 0f,
+    val border: Int = 0,
+    val shadow: Float = 0f,
     val alpha: Float = 1f,
     val foreground: Foreground = Foreground(),
 ) : Parcelable {
@@ -60,6 +62,8 @@ data class Window(
             } ?: Padding(2, 4),
             minWidth = node?.get("min_width")?.int ?: 0,
             cornerRadius = node?.get("corner_radius")?.float ?: 0f,
+            border = node?.get("border")?.int ?: 0,
+            shadow = node?.get("shadow")?.float ?: 0f,
             alpha = node?.get("alpha")?.float ?: 1f,
             foreground = Foreground.decode(node?.get("foreground")),
         )

@@ -90,6 +90,8 @@ window:               # 候选窗口（悬浮窗）参数
     horizontal: 4         # 横向内边距（整数）
 #  min_width: 0          # 最小宽度（整数）
 #  corner_radius: 0      # 圆角半径（浮点）
+#  border: 0             # 边框宽度（整数）
+#  shadow: 0.0           # 阴影半径（浮点）
 #  alpha: 1              # 透明度（0-1，浮点）
   foreground:           # 前景样式
     label_font_size: 20   # 序号字体大小（浮点）

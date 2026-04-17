@@ -400,6 +400,18 @@
           "maximum": 48,
           "default": 0
         },
+        "border": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 24,
+          "default": 0
+        },
+        "shadow": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 64,
+          "default": 0
+        },
         "alpha": {
           "type": "number",
           "minimum": 0.0,
