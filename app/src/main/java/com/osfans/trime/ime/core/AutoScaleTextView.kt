@@ -165,6 +165,15 @@ constructor(
         val textWidth = textBounds.width()
         val textHeight = textBounds.height()
 
+        // Prevent division by zero: if text dimensions are zero
+        if (textWidth == 0 || textHeight == 0) {
+            textScaleX = 1.0f
+            textScaleY = 1.0f
+            translateX = 0f
+            translateY = 0f
+            return
+        }
+
         @SuppressLint("RtlHardcoded")
         val shouldAlignLeft = gravity and Gravity.HORIZONTAL_GRAVITY_MASK == Gravity.LEFT
 
@@ -231,5 +240,13 @@ constructor(
 
     override fun getTextScaleX(): Float = textScaleX
 
-    override fun getBaseline(): Int = (-fontMetrics.top * textScaleY).roundToInt()
+    override fun getBaseline(): Int {
+        val baseline = -fontMetrics.top * textScaleY
+        // Prevent NaN or Infinity from causing crash
+        return if (baseline.isNaN() || baseline.isInfinite()) {
+            super.getBaseline()
+        } else {
+            baseline.roundToInt()
+        }
+    }
 }
