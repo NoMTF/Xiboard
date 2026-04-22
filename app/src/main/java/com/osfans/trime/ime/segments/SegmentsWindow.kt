@@ -8,10 +8,12 @@ package com.osfans.trime.ime.segments
 import android.app.SearchManager
 import android.content.ClipData
 import android.content.Intent
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.R
 import com.osfans.trime.data.db.CollectionHelper
@@ -24,6 +26,7 @@ import com.osfans.trime.util.NativeTokenizer
 import com.osfans.trime.util.toast
 import kotlinx.coroutines.launch
 import org.kodein.di.instance
+import splitties.dimensions.dp
 import splitties.systemservices.clipboardManager
 
 class SegmentsWindow(private val source: String) : BoardWindow.BarBoardWindow() {
@@ -109,6 +112,25 @@ class SegmentsWindow(private val source: String) : BoardWindow.BarBoardWindow() 
         }
     }
 
+    private val toolbarButtons by lazy {
+        val buttonSpacing = theme.toolBar.buttonSpacing
+        FlexboxLayout(context).apply {
+            flexDirection = FlexDirection.ROW_REVERSE
+            alignItems = AlignItems.CENTER
+            val buttons = listOf(ui.selectButton, ui.copyButton, ui.starButton, ui.searchButton, ui.shareButton)
+            val size = theme.generalStyle.run { candidateViewHeight + commentHeight }
+            buttons.forEachIndexed { index, button ->
+                val lParams = FlexboxLayout.LayoutParams(dp(size), dp(size))
+                if (index > 0) {
+                    lParams.marginEnd = dp(buttonSpacing)
+                }
+                addView(button, lParams)
+            }
+        }
+    }
+
+    override fun onCreateBarView(): View = toolbarButtons
+
     private fun onSelectionChanged() {
         val joined = adapter.joinedSegments
         service.updateComposingText(joined)
@@ -120,10 +142,7 @@ class SegmentsWindow(private val source: String) : BoardWindow.BarBoardWindow() 
         }
 
         val hasSelection = adapter.selectionSnapshot.isNotEmpty()
-        ui.shareButton.isEnabled = hasSelection
-        ui.searchButton.isEnabled = hasSelection
-        ui.starButton.isEnabled = hasSelection
-        ui.copyButton.isEnabled = hasSelection
+        ui.updateButtons(hasSelection)
     }
 
     override fun onCreateView() = ui.root
