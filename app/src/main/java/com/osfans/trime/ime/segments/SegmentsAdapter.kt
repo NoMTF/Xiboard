@@ -15,11 +15,37 @@ import com.osfans.trime.data.theme.Theme
 class SegmentsAdapter(
     private val theme: Theme,
     private val onItemClick: () -> Unit,
+    private val rawText: String = "",
 ) : BaseQuickAdapter<String, SegmentsAdapter.ViewHolder>() {
 
     class ViewHolder(val ui: SegmentUi) : RecyclerView.ViewHolder(ui.root)
 
     private val selection = mutableSetOf<Int>()
+
+    private val separators: List<String> by lazy {
+        if (rawText.isEmpty() || items.isEmpty()) emptyList() else computeSeparators()
+    }
+
+    private fun computeSeparators(): List<String> {
+        val result = mutableListOf<String>()
+        var idx = 0
+        for (item in items) {
+            val sb = StringBuilder()
+            var pos = idx + item.length
+            while (pos < rawText.length) {
+                val c = rawText[pos]
+                if (c == ' ' || c == '\n' || c == '\t' || c == '\r') {
+                    sb.append(c)
+                    pos++
+                } else {
+                    break
+                }
+            }
+            result.add(sb.toString())
+            idx = pos
+        }
+        return result
+    }
 
     override fun onCreateViewHolder(
         context: Context,
@@ -79,7 +105,14 @@ class SegmentsAdapter(
         get() = selection.size == items.size
 
     val joinedSegments: String
-        get() = items.asSequence()
-            .filterIndexed { i, _ -> isSegmentSelected(i) }
-            .joinToString("")
+        get() = buildString {
+            items.forEachIndexed { i, item ->
+                if (isSegmentSelected(i)) {
+                    append(item)
+                    if (isSegmentSelected(i + 1)) {
+                        append(separators.getOrElse(i) { "" })
+                    }
+                }
+            }
+        }
 }
