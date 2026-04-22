@@ -9,6 +9,7 @@ import android.content.Context
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.recyclerview.widget.RecyclerView
+import splitties.dimensions.dp
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -29,6 +30,8 @@ class DragSelectTouchListener(
     private var initialX = 0f
     private var initialY = 0f
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    private val scrollThreshold = context.dp(10)
+    private val maxScrollAmount = context.dp(12)
 
     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
         val child = rv.findChildViewUnder(e.x, e.y)
@@ -84,11 +87,19 @@ class DragSelectTouchListener(
     override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
         if (!isDragSelecting) return
 
-        val child = rv.findChildViewUnder(e.x, e.y)
+        val clampedY = e.y.coerceIn(0f, rv.height.toFloat())
+        val child = rv.findChildViewUnder(e.x, clampedY)
         val position = child?.let { rv.getChildAdapterPosition(it) } ?: -1
 
         when (e.actionMasked) {
             MotionEvent.ACTION_MOVE -> {
+                val scrollAmount = when {
+                    clampedY < scrollThreshold -> -maxScrollAmount
+                    clampedY > rv.height - scrollThreshold -> maxScrollAmount
+                    else -> 0
+                }
+                if (scrollAmount != 0) rv.scrollBy(0, scrollAmount)
+
                 if (position != -1 && position != lastEndPosition) {
                     updateRange(rv, startPosition, position)
                     lastEndPosition = position
