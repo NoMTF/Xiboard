@@ -8,7 +8,6 @@ package com.osfans.trime.ime.segments
 import android.content.Context
 import com.osfans.trime.R
 import com.osfans.trime.ime.bar.ui.ToolButton
-import com.osfans.trime.ime.symbol.SpacesItemDecoration
 import splitties.dimensions.dp
 import splitties.views.dsl.constraintlayout.bottomOfParent
 import splitties.views.dsl.constraintlayout.centerHorizontally
@@ -24,7 +23,6 @@ import splitties.views.dsl.recyclerview.recyclerView
 class SegmentsUi(override val ctx: Context) : Ui {
     val recyclerView = recyclerView {
         itemAnimator = null
-        addItemDecoration(SpacesItemDecoration(dp(4)))
     }
 
     val selectButton = ToolButton(ctx, R.drawable.ic_baseline_select_all_24)

@@ -8,24 +8,24 @@ package com.osfans.trime.ime.segments
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.drawable.StateListDrawable
-import android.os.Build
 import android.view.ViewOutlineProvider
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.data.theme.FontManager
 import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.ime.keyboard.GestureFrame
 import splitties.dimensions.dp
-import splitties.resources.styledDrawable
 import splitties.views.dsl.core.Ui
 import splitties.views.dsl.core.add
 import splitties.views.dsl.core.lParams
-import splitties.views.dsl.core.matchParent
 import splitties.views.dsl.core.textView
 import splitties.views.dsl.core.wrapContent
 import splitties.views.gravityCenter
 import splitties.views.setPaddingDp
 
 class SegmentUi(override val ctx: Context, theme: Theme) : Ui {
+    private val spacing = ctx.dp(4)
+
     val textView =
         textView {
             textSize = 16f
@@ -66,6 +66,9 @@ class SegmentUi(override val ctx: Context, theme: Theme) : Ui {
         }
         clipToOutline = true
         outlineProvider = ViewOutlineProvider.BACKGROUND
+        layoutParams = FlexboxLayoutManager.LayoutParams(wrapContent, wrapContent).apply {
+            setMargins(spacing, spacing, spacing, spacing)
+        }
         add(
             textView,
             lParams(wrapContent, wrapContent) {
