@@ -48,7 +48,7 @@ val Project.builder
 val Project.buildGitRepo
     get() =
         envOrProp("BUILD_GIT_REPO", "buildGitRepo") {
-            runCmd("git remote get-url origin", "https://github.com/osfans/trime")
+            runCmd("git remote get-url origin", "https://example.invalid/xiboard")
                 .replace("git@([^:]+):(.+)/(.+)\\.git".toRegex(), "https://$1/$2/$3")
         }
 

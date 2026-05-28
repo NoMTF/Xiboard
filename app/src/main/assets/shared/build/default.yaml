@@ -1,0 +1,118 @@
+__build_info:
+  rime_version: 1.16.1
+  timestamps:
+    default: 1779963934
+    default.custom: 1779963936
+ascii_composer:
+  good_old_caps_lock: true
+  switch_key:
+    Caps_Lock: clear
+    Control_L: noop
+    Control_R: noop
+    Shift_L: commit_code
+    Shift_R: noop
+config_version: "2026-05-28"
+key_binder:
+  bindings:
+    - {accept: "Shift+Tab", send: "Shift+Left", when: composing}
+    - {accept: Tab, send: "Shift+Right", when: composing}
+    - {accept: "Alt+Left", send: "Shift+Left", when: composing}
+    - {accept: "Alt+Right", send: "Shift+Right", when: composing}
+    - {accept: minus, send: Page_Up, when: has_menu}
+    - {accept: equal, send: Page_Down, when: has_menu}
+    - {accept: comma, send: Page_Up, when: paging}
+    - {accept: period, send: Page_Down, when: has_menu}
+  select_first_character: bracketleft
+  select_last_character: bracketright
+menu:
+  page_size: 5
+navigator:
+  bindings:
+    Left: left_by_char_no_loop
+    Right: right_by_char_no_loop
+    "Shift+Left": left_by_syllable
+    "Shift+Right": right_by_syllable
+punctuator:
+  digit_separators: ",.:"
+  full_shape:
+    " ": {commit: "　"}
+    "!": {commit: "！"}
+    "\"": {pair: ["“", "”"]}
+    "#": ["#", "＃"]
+    "$": ["￥", "$"]
+    "%": ["%", "％"]
+    "&": "&"
+    "'": {pair: ["‘", "’"]}
+    "(": "（"
+    ")": "）"
+    "*": ["*", "＊", "×"]
+    "+": "+"
+    ",": {commit: "，"}
+    "-": "-"
+    .: {commit: "。"}
+    "/": ["、", "/"]
+    ":": {commit: "："}
+    ";": {commit: "；"}
+    "<": ["《", "〈", "«", "‹"]
+    "=": "="
+    ">": ["》", "〉", "»", "›"]
+    "?": {commit: "？"}
+    "@": ["@", "＠"]
+    "[": ["【", "〔", "["]
+    "\\": ["、", "\\"]
+    "]": ["】", "〕", "]"]
+    "^": {commit: "……"}
+    _: "——"
+    "`": "`"
+    "{": ["「", "『", "{"]
+    "|": ["·", "|", "｜"]
+    "}": ["」", "』", "}"]
+    "~": "~"
+  half_shape:
+    "!": "！"
+    "\"": {pair: ["“", "”"]}
+    "#": "#"
+    "$": "￥"
+    "%": "%"
+    "&": "&"
+    "'": {pair: ["‘", "’"]}
+    "(": "（"
+    ")": "）"
+    "*": "*"
+    "+": "+"
+    ",": "，"
+    "-": "-"
+    .: "。"
+    "/": "/"
+    ":": "："
+    ";": "；"
+    "<": "《"
+    "=": "="
+    ">": "》"
+    "?": "？"
+    "@": "@"
+    "[": "【"
+    "\\": "、"
+    "]": "】"
+    "^": "……"
+    _: "——"
+    "`": "·"
+    "{": "「"
+    "|": "|"
+    "}": "」"
+    "~": "~"
+recognizer:
+  patterns:
+    email: "^[A-Za-z][-_.0-9A-Za-z]*@.*$"
+    underscore: "^[A-Za-z]+_.*"
+    url: "^(www[.]|https?:|ftp[.:]|mailto:|file:).*$|^[a-z]+[.].+$"
+schema_list:
+  - schema: rime_ice
+switcher:
+  abbreviate_options: false
+  caption: "方案"
+  fold_options: false
+  hotkeys:
+    []
+  save_options:
+    - ascii_punct

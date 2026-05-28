@@ -149,60 +149,60 @@ class GlobalRefSingleton {
     BooleanInit = env->GetMethodID(Boolean, "<init>", "(Z)V");
 
     Rime = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("com/osfans/trime/core/Rime")));
+        env->NewGlobalRef(env->FindClass("com/xiboard/core/Rime")));
     HandleRimeMessage = env->GetStaticMethodID(Rime, "handleRimeMessage",
                                                "(I[Ljava/lang/Object;)V");
 
     CandidateItem = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("com/osfans/trime/core/CandidateItem")));
+        env->FindClass("com/xiboard/core/CandidateItem")));
     CandidateItemInit = env->GetMethodID(
         CandidateItem, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
 
     CandidateProto = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("com/osfans/trime/core/CandidateProto")));
+        env->FindClass("com/xiboard/core/CandidateProto")));
     CandidateProtoInit = env->GetMethodID(
         CandidateProto, "<init>",
         "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 
     CommitProto = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("com/osfans/trime/core/CommitProto")));
+        env->NewGlobalRef(env->FindClass("com/xiboard/core/CommitProto")));
     CommitProtoInit =
         env->GetMethodID(CommitProto, "<init>", "(Ljava/lang/String;)V");
 
     ContextProto = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("com/osfans/trime/core/ContextProto")));
+        env->FindClass("com/xiboard/core/ContextProto")));
     ContextProtoInit =
         env->GetMethodID(ContextProto, "<init>",
-                         "(Lcom/osfans/trime/core/CompositionProto;Lcom/osfans/"
-                         "trime/core/"
-                         "MenuProto;Ljava/lang/String;I)V");
+                         "(Lcom/xiboard/core/CompositionProto;"
+                         "Lcom/xiboard/core/MenuProto;"
+                         "Ljava/lang/String;I)V");
 
     CompositionProto = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("com/osfans/trime/core/CompositionProto")));
+        env->FindClass("com/xiboard/core/CompositionProto")));
     CompositionProtoInit =
         env->GetMethodID(CompositionProto, "<init>",
                          "(IIIILjava/lang/String;Ljava/lang/String;)V");
 
     MenuProto = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("com/osfans/trime/core/MenuProto")));
+        env->NewGlobalRef(env->FindClass("com/xiboard/core/MenuProto")));
     MenuProtoInit = env->GetMethodID(
         MenuProto, "<init>",
-        "(IIZI[Lcom/osfans/trime/core/CandidateProto;Ljava/lang/"
+        "(IIZI[Lcom/xiboard/core/CandidateProto;Ljava/lang/"
         "String;[Ljava/lang/String;)V");
 
     StatusProto = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("com/osfans/trime/core/StatusProto")));
+        env->NewGlobalRef(env->FindClass("com/xiboard/core/StatusProto")));
     StatusProtoInit =
         env->GetMethodID(StatusProto, "<init>",
                          "(Ljava/lang/String;Ljava/lang/String;ZZZZZZZ)V");
 
     SchemaListItem = reinterpret_cast<jclass>(
-        env->NewGlobalRef(env->FindClass("com/osfans/trime/core/SchemaItem")));
+        env->NewGlobalRef(env->FindClass("com/xiboard/core/SchemaItem")));
     SchemaListItemInit = env->GetMethodID(
         SchemaListItem, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
 
     KeyEvent = reinterpret_cast<jclass>(env->NewGlobalRef(
-        env->FindClass("com/osfans/trime/core/RimeKeyEvent")));
+        env->FindClass("com/xiboard/core/RimeKeyEvent")));
     KeyEventInit =
         env->GetMethodID(KeyEvent, "<init>", "(IILjava/lang/String;)V");
   }

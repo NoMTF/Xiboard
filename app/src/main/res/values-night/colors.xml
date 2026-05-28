@@ -7,6 +7,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 <resources>
-    <color name="colorAccent">#0A7CB2</color>
-    <color name="colorAccentDark">#28566d</color>
+    <color name="colorPrimary">#9BD4F0</color>
+    <color name="colorPrimaryDark">#203746</color>
+    <color name="colorAccent">#F0B4C6</color>
+    <color name="colorAccentDark">#D28AA2</color>
+    <color name="toolbarForegroundColor">#10202B</color>
 </resources>

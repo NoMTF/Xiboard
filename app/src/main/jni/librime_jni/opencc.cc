@@ -13,7 +13,7 @@
 // opencc
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_osfans_trime_data_opencc_OpenCCDictManager_openCCLineConv(
+Java_com_xiboard_data_opencc_OpenCCDictManager_openCCLineConv(
     JNIEnv *env, jclass clazz, jstring input, jstring config_file_name) {
   try {
     opencc::SimpleConverter converter(CString(env, config_file_name));
@@ -25,7 +25,7 @@ Java_com_osfans_trime_data_opencc_OpenCCDictManager_openCCLineConv(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_osfans_trime_data_opencc_OpenCCDictManager_openCCDictConv(
+Java_com_xiboard_data_opencc_OpenCCDictManager_openCCDictConv(
     JNIEnv *env, jclass clazz, jstring src, jstring dest, jboolean mode) {
   auto src_file = CString(env, src);
   auto dest_file = CString(env, dest);

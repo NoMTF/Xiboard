@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "trime"
+rootProject.name = "Xiboard"
 include(":app")
 include(":codegen")

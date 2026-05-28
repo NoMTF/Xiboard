@@ -1,1 +1,123 @@
-../../../../data/rime/prelude/default.yaml
+# Rime default settings
+# encoding: utf-8
+
+config_version: '2026-05-28'
+
+schema_list:
+  - schema: rime_ice
+
+menu:
+  page_size: 5
+
+switcher:
+  caption: "方案"
+  hotkeys: []
+  save_options:
+    - ascii_punct
+  fold_options: false
+  abbreviate_options: false
+
+ascii_composer:
+  good_old_caps_lock: true
+  switch_key:
+    Caps_Lock: clear
+    Shift_L: commit_code
+    Shift_R: noop
+    Control_L: noop
+    Control_R: noop
+
+punctuator:
+  digit_separators: ",.:"
+  full_shape:
+    " ": { commit: "　" }
+    ",": { commit: "，" }
+    ".": { commit: "。" }
+    "<": [ "《", "〈", "«", "‹" ]
+    ">": [ "》", "〉", "»", "›" ]
+    "/": [ "、", "/" ]
+    "?": { commit: "？" }
+    ";": { commit: "；" }
+    ":": { commit: "：" }
+    "'": { pair: [ "‘", "’" ] }
+    "\"": { pair: [ "“", "”" ] }
+    "\\": [ "、", "\\" ]
+    "|": [ "·", "|", "｜" ]
+    "`": "`"
+    "~": "~"
+    "!": { commit: "！" }
+    "@": [ "@", "＠" ]
+    "#": [ "#", "＃" ]
+    "%": [ "%", "％" ]
+    "$": [ "￥", "$" ]
+    "^": { commit: "……" }
+    "&": "&"
+    "*": [ "*", "＊", "×" ]
+    "(": "（"
+    ")": "）"
+    "-": "-"
+    "_": "——"
+    "+": "+"
+    "=": "="
+    "[": [ "【", "〔", "[" ]
+    "]": [ "】", "〕", "]" ]
+    "{": [ "「", "『", "{" ]
+    "}": [ "」", "』", "}" ]
+  half_shape:
+    ",": "，"
+    ".": "。"
+    "<": "《"
+    ">": "》"
+    "/": "/"
+    "?": "？"
+    ";": "；"
+    ":": "："
+    "'": { pair: [ "‘", "’" ] }
+    "\"": { pair: [ "“", "”" ] }
+    "\\": "、"
+    "|": "|"
+    "`": "·"
+    "~": "~"
+    "!": "！"
+    "@": "@"
+    "#": "#"
+    "%": "%"
+    "$": "￥"
+    "^": "……"
+    "&": "&"
+    "*": "*"
+    "(": "（"
+    ")": "）"
+    "-": "-"
+    "_": "——"
+    "+": "+"
+    "=": "="
+    "[": "【"
+    "]": "】"
+    "{": "「"
+    "}": "」"
+
+recognizer:
+  patterns:
+    email: "^[A-Za-z][-_.0-9A-Za-z]*@.*$"
+    url: "^(www[.]|https?:|ftp[.:]|mailto:|file:).*$|^[a-z]+[.].+$"
+    underscore: "^[A-Za-z]+_.*"
+
+navigator:
+  bindings:
+    Left: left_by_char_no_loop
+    Right: right_by_char_no_loop
+    Shift+Left: left_by_syllable
+    Shift+Right: right_by_syllable
+
+key_binder:
+  select_first_character: "bracketleft"
+  select_last_character: "bracketright"
+  bindings:
+    - { when: composing, accept: Shift+Tab, send: Shift+Left }
+    - { when: composing, accept: Tab, send: Shift+Right }
+    - { when: composing, accept: Alt+Left, send: Shift+Left }
+    - { when: composing, accept: Alt+Right, send: Shift+Right }
+    - { when: has_menu, accept: minus, send: Page_Up }
+    - { when: has_menu, accept: equal, send: Page_Down }
+    - { when: paging, accept: comma, send: Page_Up }
+    - { when: has_menu, accept: period, send: Page_Down }

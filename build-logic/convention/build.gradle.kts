@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.serialization") version embeddedKotlinVersion
 }
 
-group = "com.osfans.trime.build_logic"
+group = "com.xiboard.build_logic"
 
 dependencies {
     compileOnly(libs.android.gradlePlugin)
@@ -18,23 +18,23 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidAppConvention") {
-            id = "com.osfans.trime.app-convention"
+            id = "com.xiboard.app-convention"
             implementationClass = "AndroidAppConventionPlugin"
         }
         register("dataChecksums") {
-            id = "com.osfans.trime.data-checksums"
+            id = "com.xiboard.data-checksums"
             implementationClass = "DataChecksumsPlugin"
         }
         register("nativeAppConvention") {
-            id = "com.osfans.trime.native-app-convention"
+            id = "com.xiboard.native-app-convention"
             implementationClass = "NativeAppConventionPlugin"
         }
         register("nativeCacheHash") {
-            id = "com.osfans.trime.native-cache-hash"
+            id = "com.xiboard.native-cache-hash"
             implementationClass = "NativeCacheHashPlugin"
         }
         register("openccData") {
-            id = "com.osfans.trime.opencc-data"
+            id = "com.xiboard.opencc-data"
             implementationClass = "OpenCCDataPlugin"
         }
     }

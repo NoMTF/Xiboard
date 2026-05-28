@@ -102,9 +102,15 @@ class OpenCCDataPlugin : Plugin<Project> {
                     source: String,
                     outputFilePath: String,
                 ) {
+                    val pythonCommand =
+                        if (System.getProperty("os.name").contains("Windows", ignoreCase = true)) {
+                            "python"
+                        } else {
+                            "python3"
+                        }
                     project.providers.exec {
                         workingDir = output
-                        commandLine = listOf("python3", reverse, source, outputFilePath)
+                        commandLine = listOf(pythonCommand, reverse, source, outputFilePath)
                     }.result.get()
                 }
                 for (dict in DICTS_GENERATED) {

@@ -7,11 +7,11 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id("com.osfans.trime.app-convention")
-    id("com.osfans.trime.native-app-convention")
-    id("com.osfans.trime.data-checksums")
-    id("com.osfans.trime.native-cache-hash")
-    id("com.osfans.trime.opencc-data")
+    id("com.xiboard.app-convention")
+    id("com.xiboard.native-app-convention")
+    id("com.xiboard.data-checksums")
+    id("com.xiboard.native-cache-hash")
+    id("com.xiboard.opencc-data")
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
@@ -20,16 +20,16 @@ plugins {
 }
 
 android {
-    namespace = "com.osfans.trime"
+    namespace = "com.xiboard"
     compileSdk = 35
     buildToolsVersion = "35.0.0"
 
     defaultConfig {
-        applicationId = "com.osfans.trime"
+        applicationId = "com.xiboard.inputmethod"
         minSdk = 21
         targetSdk = 35
         versionCode = 20260501
-        versionName = "3.3.10"
+        versionName = "3.3.10-xiboard1"
 
         multiDexEnabled = true
         buildConfigField("String", "BUILDER", "\"${project.builder}\"")
@@ -65,8 +65,6 @@ android {
             resValue("string", "trime_app_name", "@string/app_name_release")
         }
         debug {
-            applicationIdSuffix = ".debug"
-
             resValue("string", "trime_app_name", "@string/app_name_debug")
         }
         all {
@@ -122,12 +120,6 @@ android {
                     "/kotlin-tooling-metadata.json",
                 )
         }
-    }
-}
-
-kotlin {
-    sourceSets.configureEach {
-        kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/$name/kotlin"))
     }
 }
 
@@ -194,6 +186,7 @@ dependencies {
     implementation(libs.community.material.typeface) {
         artifact { type = "aar" }
     }
+    implementation(files("libs/sherpa-onnx-1.13.0.aar"))
 
     // Testing
     testImplementation(libs.junit)

@@ -3,7 +3,7 @@
 #include "jni-utils.h"
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_com_osfans_trime_core_RimeConfig_openRimeConfig(JNIEnv* env,
+Java_com_xiboard_core_RimeConfig_openRimeConfig(JNIEnv* env,
                                                      jclass /* thiz */,
                                                      jstring config_id) {
   auto api = rime_get_api();
@@ -16,7 +16,7 @@ Java_com_osfans_trime_core_RimeConfig_openRimeConfig(JNIEnv* env,
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_com_osfans_trime_core_RimeConfig_openRimeUserConfig(JNIEnv* env,
+Java_com_xiboard_core_RimeConfig_openRimeUserConfig(JNIEnv* env,
                                                          jclass /* thiz */,
                                                          jstring config_id) {
   auto api = rime_get_api();
@@ -29,7 +29,7 @@ Java_com_osfans_trime_core_RimeConfig_openRimeUserConfig(JNIEnv* env,
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_com_osfans_trime_core_RimeConfig_openRimeSchema(JNIEnv* env,
+Java_com_xiboard_core_RimeConfig_openRimeSchema(JNIEnv* env,
                                                      jclass /* thiz */,
                                                      jstring schema_id) {
   auto api = rime_get_api();
@@ -42,7 +42,7 @@ Java_com_osfans_trime_core_RimeConfig_openRimeSchema(JNIEnv* env,
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_osfans_trime_core_RimeConfig_closeRimeConfig(JNIEnv* env,
+Java_com_xiboard_core_RimeConfig_closeRimeConfig(JNIEnv* env,
                                                       jclass /* thiz */,
                                                       jlong peer) {
   auto api = rime_get_api();
@@ -52,7 +52,7 @@ Java_com_osfans_trime_core_RimeConfig_closeRimeConfig(JNIEnv* env,
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_osfans_trime_core_RimeConfig_getRimeConfigInt(JNIEnv* env,
+Java_com_xiboard_core_RimeConfig_getRimeConfigInt(JNIEnv* env,
                                                        jclass /* thiz */,
                                                        jlong peer,
                                                        jstring key) {
@@ -66,7 +66,7 @@ Java_com_osfans_trime_core_RimeConfig_getRimeConfigInt(JNIEnv* env,
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_osfans_trime_core_RimeConfig_getRimeConfigString(JNIEnv* env,
+Java_com_xiboard_core_RimeConfig_getRimeConfigString(JNIEnv* env,
                                                           jclass /* thiz */,
                                                           jlong peer,
                                                           jstring key) {
@@ -78,7 +78,7 @@ Java_com_osfans_trime_core_RimeConfig_getRimeConfigString(JNIEnv* env,
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL
-Java_com_osfans_trime_core_RimeConfig_getRimeConfigListItemPath(
+Java_com_xiboard_core_RimeConfig_getRimeConfigListItemPath(
     JNIEnv* env, jclass /* thiz */, jlong peer, jstring key) {
   auto api = rime_get_api();
   auto config = reinterpret_cast<RimeConfig*>(peer);
@@ -96,7 +96,7 @@ Java_com_osfans_trime_core_RimeConfig_getRimeConfigListItemPath(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_osfans_trime_core_RimeConfig_setRimeConfigBool(JNIEnv* env,
+Java_com_xiboard_core_RimeConfig_setRimeConfigBool(JNIEnv* env,
                                                         jclass /* thiz */,
                                                         jlong peer, jstring key,
                                                         jboolean value) {

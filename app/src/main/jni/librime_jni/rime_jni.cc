@@ -43,17 +43,17 @@ class Rime {
     const char *sharedDir = getenv("RIME_SHARED_DATA_DIR");
     const char *versionName = getenv("RIME_DISTRIBUTION_VERSION");
 
-    RIME_STRUCT(RimeTraits, trime_traits)
-    trime_traits.shared_data_dir = sharedDir;
-    trime_traits.user_data_dir = userDir;
-    trime_traits.log_dir = "";  // set empty log_dir to log to logcat only
-    trime_traits.app_name = "rime.trime";
-    trime_traits.distribution_name = "Trime";
-    trime_traits.distribution_code_name = "trime";
-    trime_traits.distribution_version = versionName;
+    RIME_STRUCT(RimeTraits, xiboard_traits)
+    xiboard_traits.shared_data_dir = sharedDir;
+    xiboard_traits.user_data_dir = userDir;
+    xiboard_traits.log_dir = "";  // set empty log_dir to log to logcat only
+    xiboard_traits.app_name = "xiboard";
+    xiboard_traits.distribution_name = "Xiboard";
+    xiboard_traits.distribution_code_name = "xiboard";
+    xiboard_traits.distribution_version = versionName;
 
-    rime->setup(&trime_traits);
-    rime->initialize(&trime_traits);
+    rime->setup(&xiboard_traits);
+    rime->initialize(&xiboard_traits);
     rime->set_notification_handler(notificationHandler, GlobalRef->jvm);
     rime->start_maintenance(fullCheck);
   }
@@ -236,7 +236,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved) {
   return JNI_VERSION_1_6;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
+extern "C" JNIEXPORT void JNICALL Java_com_xiboard_core_Rime_startupRime(
     JNIEnv *env, jclass clazz, jstring shared_dir, jstring user_dir,
     jstring version_name, jboolean full_check) {
   // for rime shared data dir
@@ -268,20 +268,20 @@ extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_startupRime(
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_osfans_trime_core_Rime_exitRime(JNIEnv *env, jclass /* thiz */) {
+Java_com_xiboard_core_Rime_exitRime(JNIEnv *env, jclass /* thiz */) {
   Rime::Instance().exit();
 }
 
 // deployment
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_deployRimeSchemaFile(JNIEnv *env,
+Java_com_xiboard_core_Rime_deployRimeSchemaFile(JNIEnv *env,
                                                      jclass /* thiz */,
                                                      jstring schema_file) {
   return Rime::Instance().deploySchema(*CString(env, schema_file));
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_deployRimeConfigFile(JNIEnv *env,
+Java_com_xiboard_core_Rime_deployRimeConfigFile(JNIEnv *env,
                                                      jclass /* thiz */,
                                                      jstring file_name,
                                                      jstring version_key) {
@@ -290,107 +290,107 @@ Java_com_osfans_trime_core_Rime_deployRimeConfigFile(JNIEnv *env,
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_syncRimeUserData(JNIEnv *env,
+Java_com_xiboard_core_Rime_syncRimeUserData(JNIEnv *env,
                                                  jclass /* thiz */) {
   return Rime::Instance().sync();
 }
 
 // input
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_processRimeKey(JNIEnv *env, jclass /* thiz */,
+Java_com_xiboard_core_Rime_processRimeKey(JNIEnv *env, jclass /* thiz */,
                                                jint keycode, jint mask) {
   return Rime::Instance().processKey(keycode, mask);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_commitRimeComposition(JNIEnv *env,
+Java_com_xiboard_core_Rime_commitRimeComposition(JNIEnv *env,
                                                       jclass /* thiz */) {
   return Rime::Instance().commitComposition();
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_osfans_trime_core_Rime_clearRimeComposition(JNIEnv *env,
+Java_com_xiboard_core_Rime_clearRimeComposition(JNIEnv *env,
                                                      jclass /* thiz */) {
   Rime::Instance().clearComposition();
 }
 
 // output
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_osfans_trime_core_Rime_getRimeCommit(JNIEnv *env, jclass /* thiz */) {
+Java_com_xiboard_core_Rime_getRimeCommit(JNIEnv *env, jclass /* thiz */) {
   auto commit = Rime::Instance().commit();
   return rimeCommitToJObject(env, *commit);
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_osfans_trime_core_Rime_getRimeContext(JNIEnv *env, jclass /* thiz */) {
+Java_com_xiboard_core_Rime_getRimeContext(JNIEnv *env, jclass /* thiz */) {
   auto context = Rime::Instance().context();
   return rimeContextToJObject(env, *context);
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_osfans_trime_core_Rime_getRimeStatus(JNIEnv *env, jclass /* thiz */) {
+Java_com_xiboard_core_Rime_getRimeStatus(JNIEnv *env, jclass /* thiz */) {
   auto status = Rime::Instance().status();
   return rimeStatusToJObject(env, *status);
 }
 
 // runtime options
-extern "C" JNIEXPORT void JNICALL Java_com_osfans_trime_core_Rime_setRimeOption(
+extern "C" JNIEXPORT void JNICALL Java_com_xiboard_core_Rime_setRimeOption(
     JNIEnv *env, jclass /* thiz */, jstring option, jboolean value) {
   Rime::Instance().setOption(*CString(env, option), value);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_getRimeOption(JNIEnv *env, jclass /* thiz */,
+Java_com_xiboard_core_Rime_getRimeOption(JNIEnv *env, jclass /* thiz */,
                                               jstring option) {
   return Rime::Instance().getOption(*CString(env, option));
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL
-Java_com_osfans_trime_core_Rime_getRimeSchemaList(JNIEnv *env,
+Java_com_xiboard_core_Rime_getRimeSchemaList(JNIEnv *env,
                                                   jclass /* thiz */) {
   return rimeSchemaListToJObjectArray(env, Rime::Instance().schemaList());
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_osfans_trime_core_Rime_getCurrentRimeSchema(JNIEnv *env,
+Java_com_xiboard_core_Rime_getCurrentRimeSchema(JNIEnv *env,
                                                      jclass /* thiz */) {
   return env->NewStringUTF(Rime::Instance().currentSchemaId().c_str());
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_selectRimeSchema(JNIEnv *env, jclass /* thiz */,
+Java_com_xiboard_core_Rime_selectRimeSchema(JNIEnv *env, jclass /* thiz */,
                                                  jstring schema_id) {
   return Rime::Instance().selectSchema(*CString(env, schema_id));
 }
 
 // testing
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_simulateRimeKeySequence(JNIEnv *env,
+Java_com_xiboard_core_Rime_simulateRimeKeySequence(JNIEnv *env,
                                                         jclass /* thiz */,
                                                         jstring key_sequence) {
   return Rime::Instance().simulateKeySequence(CString(env, key_sequence));
 }
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_osfans_trime_core_Rime_getRimeRawInput(JNIEnv *env,
+Java_com_xiboard_core_Rime_getRimeRawInput(JNIEnv *env,
                                                 jclass /* thiz */) {
   return env->NewStringUTF(Rime::Instance().rawInput().data());
 }
 
 extern "C" JNIEXPORT jint JNICALL
-Java_com_osfans_trime_core_Rime_getRimeCaretPos(JNIEnv *env,
+Java_com_xiboard_core_Rime_getRimeCaretPos(JNIEnv *env,
                                                 jclass /* thiz */) {
   return static_cast<jint>(Rime::Instance().caretPosition());
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_osfans_trime_core_Rime_setRimeCaretPos(JNIEnv *env, jclass /* thiz */,
+Java_com_xiboard_core_Rime_setRimeCaretPos(JNIEnv *env, jclass /* thiz */,
                                                 jint caret_pos) {
   Rime::Instance().setCaretPosition(caret_pos);
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_selectRimeCandidate(JNIEnv *env,
+Java_com_xiboard_core_Rime_selectRimeCandidate(JNIEnv *env,
                                                     jclass /* thiz */,
                                                     jint index,
                                                     jboolean global) {
@@ -398,7 +398,7 @@ Java_com_osfans_trime_core_Rime_selectRimeCandidate(JNIEnv *env,
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_deleteRimeCandidate(JNIEnv *env,
+Java_com_xiboard_core_Rime_deleteRimeCandidate(JNIEnv *env,
                                                     jclass /* thiz */,
                                                     jint index,
                                                     jboolean global) {
@@ -406,14 +406,14 @@ Java_com_osfans_trime_core_Rime_deleteRimeCandidate(JNIEnv *env,
 }
 
 extern "C" JNIEXPORT jboolean JNICALL
-Java_com_osfans_trime_core_Rime_changeRimeCandidatePage(JNIEnv *env,
+Java_com_xiboard_core_Rime_changeRimeCandidatePage(JNIEnv *env,
                                                         jclass clazz,
                                                         jboolean backward) {
   return Rime::Instance().changePage(backward);
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL
-Java_com_osfans_trime_core_Rime_getRimeCandidates(JNIEnv *env, jclass clazz,
+Java_com_xiboard_core_Rime_getRimeCandidates(JNIEnv *env, jclass clazz,
                                                   jint start_index,
                                                   jint limit) {
   return rimeCandidateListToJObjectArray(
@@ -421,7 +421,7 @@ Java_com_osfans_trime_core_Rime_getRimeCandidates(JNIEnv *env, jclass clazz,
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL
-Java_com_osfans_trime_core_Rime_getRimeBulkCandidates(JNIEnv *env,
+Java_com_xiboard_core_Rime_getRimeBulkCandidates(JNIEnv *env,
                                                       jclass clazz) {
   auto [size, highlighted, list] = Rime::Instance().getBulkCandidates();
   auto jSize = JRef(
