@@ -84,6 +84,11 @@ class MainFragment : PaddingPreferenceFragment() {
                     R.drawable.ic_baseline_more_horiz_24,
                     NavigationRoute.Advanced,
                 )
+                addDestinationPreference(
+                    R.string.about,
+                    R.drawable.ic_baseline_book_24,
+                    NavigationRoute.About,
+                )
             }
         }
     }

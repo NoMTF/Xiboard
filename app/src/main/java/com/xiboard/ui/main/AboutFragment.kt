@@ -60,12 +60,23 @@ class AboutFragment : PaddingPreferenceFragment() {
                     ),
                 )
             }
+            addCategory(R.string.build_info) {
+                isIconSpaceReserved = false
+                addPreference(
+                    Preference(requireContext()).apply {
+                        isIconSpaceReserved = false
+                        isCopyingEnabled = true
+                        setTitle(R.string.build_info)
+                        summary = DeviceInfo.buildInfo()
+                    },
+                )
+            }
             addPreference(
                 Preference(requireContext()).apply {
                     isIconSpaceReserved = false
                     isCopyingEnabled = true
-                    setTitle(R.string.build_info)
-                    summary = DeviceInfo.get(requireContext())
+                    setTitle(R.string.device_info)
+                    summary = DeviceInfo.deviceInfo(requireContext())
                 },
             )
             addCategory("") {

@@ -65,9 +65,11 @@
     <string name="system_default">System default</string>
     <string name="key_swipe_travel">Min travel for gesture</string>
     <string name="trime_app_slogan">Offline Chinese input with local voice typing</string>
-    <string name="external_storage_permission_not_available">External storage permission is not available</string>
-    <string name="external_storage_permission_granted">External storage permission is granted</string>
-    <string name="external_storage_permission_denied">External storage permission was denied, deployment or reading schemas and config may not be available</string>
+    <string name="external_storage_permission_not_available">Local data directory is not available</string>
+    <string name="external_storage_permission_granted">Local data directory is ready</string>
+    <string name="external_storage_permission_denied">Local data directory is not writable</string>
+    <string name="local_storage_available">Local data directory is ready</string>
+    <string name="local_storage_not_available">Local data directory is not writable</string>
     <string name="custom_sound_effect_name">Custom key Sound Effect</string>
     <string name="setup__next">Next</string>
     <string name="done">Done</string>
@@ -90,6 +92,7 @@
     <string name="hook_ctrl_zy">Hook Ctrl+Z/Y</string>
     <string name="key_swipe_velocity">The speed of triggering the button swipe gesture (the distance/velocity is sufficient)</string>
     <string name="build_info">Build Info</string>
+    <string name="device_info">Device Info</string>
     <string name="telegram">Telegram</string>
     <string name="quick_bar">Quick bar</string>
     <string name="copy_done">Copied to clipboard!</string>
@@ -136,8 +139,8 @@
     <string name="enable_landscape_mode">Enable Landscape Mode</string>
     <string name="split_space_percent">Auto Split Keyboard Space Ratio</string>
     <string name="setup__step_three">Setup 3</string>
-    <string name="setup__request_permission_hint">老习输入法 needs local storage permission for local configuration and dictionaries.\nNo network permission is requested.</string>
-    <string name="setup__request_permission">Request storage permission</string>
+    <string name="setup__request_permission_hint">老习输入法 keeps configuration and dictionaries in its private local data directory.\nNo network permission is requested.</string>
+    <string name="setup__request_permission">Prepare local data</string>
     <string name="grant_permission">Grant permission</string>
     <string name="notification_permission_title">No Notification Permission</string>
     <string name="notification_permission_message">Without the permission to post notifications, we are not able to notify you when some time-consuming operations are done.</string>

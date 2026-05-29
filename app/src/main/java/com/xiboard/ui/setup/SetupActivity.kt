@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -126,7 +127,7 @@ class SetupActivity : FragmentActivity() {
     }
 
     override fun onPause() {
-        if (SetupPage.hasUndonePage()) {
+        if (SetupPage.hasUndonePage() && NotificationManagerCompat.from(this).areNotificationsEnabled()) {
             NotificationCompat
                 .Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_trime_status)

@@ -936,15 +936,44 @@ liquid_keyboard:
       - space1
       - BackSpace
       - Return2
+      - quick_phrases
       - clipboard_window
       - liquid_keyboard_tabs
-  keyboards: [emoji, math, ascii, cn, history, symbollist, list, ids, symbol, tabs, pinyin, script_symbols, jp, grease, rusa, korea, lation, yinbiao, unit, yanwenzi, combing, emoji_full]  #tab列表
+  keyboards: [emoji, phrases, math, ascii, cn, history, symbollist, list, ids, symbol, tabs, pinyin, script_symbols, jp, grease, rusa, korea, lation, yinbiao, unit, yanwenzi, combing, emoji_full]  #tab列表
   tabs:
     name: 更多
     type: TABS
   history:
     name: 常用
     type: HISTORY
+  phrases:
+    type: SINGLE
+    name: 常用语
+    keys:
+      - 好的
+      - 收到
+      - 稍等一下
+      - 马上到
+      - 我现在不方便，稍后回复你。
+      - 辛苦了
+      - 谢谢
+      - 不客气
+      - 没问题
+      - 可以
+      - 不太方便
+      - 我看一下
+      - 稍后联系
+      - 到家了
+      - 在路上
+      - 今天有点忙
+      - 麻烦发我一下地址。
+      - 麻烦发我一下电话。
+      - 我先确认一下再回复你。
+      - 祝你今天顺利。
+      - 生日快乐
+      - 新年快乐
+      - 周末愉快
+      - 晚安
   emoji:
     type: SINGLE
     name: 常用
@@ -1366,6 +1395,13 @@ tool_bar:
       style: "ic@clipboard"
     action: clipboard_window
 
+  phrase_button: &phrase_button
+    foreground:
+      text: 常
+      font_size: 18
+      padding: 10
+    action: quick_phrases
+
   edit_button: &edit_button
     foreground:
       style: "ic@cursor_text"
@@ -1384,7 +1420,7 @@ tool_bar:
     action: Zenkaku_Hankaku
 
   # 右侧按钮列表（从右向左排列）
-  buttons: [ *hide_button, *emoji_button, *voice_button, *clipboard_button, *edit_button, *ascii_mode_button ]
+  buttons: [ *hide_button, *emoji_button, *voice_button, *phrase_button, *clipboard_button, *edit_button, *ascii_mode_button ]
 
 #键盘布局
 preset_keyboards:
@@ -4352,6 +4388,7 @@ preset_keys:
   liquid_keyboard_switch: { label: 更多, send: function, command: liquid_keyboard, option: "特殊" }
   liquid_keyboard_tabs: { label: 更多, send: function, command: liquid_keyboard, option: "更多" }
   liquid_keyboard_emoji: { label: 🙂, send: function, command: liquid_keyboard, option: "emoji" }
+  quick_phrases: { label: 常用, send: function, command: liquid_keyboard, option: "phrases" }
   menu_keyboard: { label: 菜单, send: function, command: menu_keyboard }
   clipboard_window: { label: "剪贴", send: function, command: "clipboard_window", option: '0' } #0剪贴板，1收藏夹
   # rime状态

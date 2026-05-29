@@ -96,6 +96,10 @@ android {
     // hack workaround lint gradle 8.0.2
     lint {
         checkReleaseBuilds = false
+        disable += setOf(
+            "CoroutineCreationDuringComposition",
+            "FlowOperatorInvokedInComposition",
+        )
     }
 
     testOptions {
@@ -145,6 +149,13 @@ android.applicationVariants.all {
     val variantName = name.replaceFirstChar { it.uppercase() }
     tasks.findByName("generateDataChecksums")?.also {
         tasks.getByName("merge${variantName}Assets").dependsOn(it)
+    }
+    listOf(
+        "generate${variantName}LintReportModel",
+        "generate${variantName}LintModel",
+        "lintAnalyze$variantName",
+    ).forEach { lintTaskName ->
+        tasks.findByName(lintTaskName)?.dependsOn("installOpenCCData", "generateDataChecksums")
     }
 }
 

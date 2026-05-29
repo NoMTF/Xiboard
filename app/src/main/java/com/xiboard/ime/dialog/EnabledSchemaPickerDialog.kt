@@ -16,13 +16,11 @@ object EnabledSchemaPickerDialog {
         @Suppress("UNUSED_PARAMETER") scope: LifecycleCoroutineScope,
         context: Context,
         extensions: (AlertDialog.Builder.() -> AlertDialog.Builder)? = null,
-    ): AlertDialog {
-        return AlertDialog
-            .Builder(context)
-            .apply {
-                setTitle(R.string.select_current_schema)
-                setMessage(R.string.no_schema_to_select)
-                extensions?.invoke(this)
-            }.create()
-    }
+    ): AlertDialog = AlertDialog
+        .Builder(context)
+        .apply {
+            setTitle(R.string.select_current_schema)
+            setMessage(R.string.no_schema_to_select)
+            extensions?.invoke(this)
+        }.create()
 }

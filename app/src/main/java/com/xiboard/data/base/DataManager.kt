@@ -186,13 +186,12 @@ object DataManager {
         return copy(sha256 = sha256("$sha256:$marker"))
     }
 
-    private fun android.content.pm.PackageInfo.longVersionCodeCompat(): Long =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            longVersionCode
-        } else {
-            @Suppress("DEPRECATION")
-            versionCode.toLong()
-        }
+    private fun android.content.pm.PackageInfo.longVersionCodeCompat(): Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        longVersionCode
+    } else {
+        @Suppress("DEPRECATION")
+        versionCode.toLong()
+    }
 
     private fun sha256(value: String): String = MessageDigest
         .getInstance("SHA-256")

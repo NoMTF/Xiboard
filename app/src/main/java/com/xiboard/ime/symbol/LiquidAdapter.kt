@@ -59,7 +59,7 @@ class LiquidAdapter(
             holder.ui.defaultTypeface
         }
         holder.ui.mainText.gravity = Gravity.CENTER
-            holder.ui.mainText.textSize = if (isEmoji) EMOJI_TEXT_SIZE_SP else TEXT_KEY_SIZE_SP
+        holder.ui.mainText.textSize = if (isEmoji) EMOJI_TEXT_SIZE_SP else TEXT_KEY_SIZE_SP
         holder.ui.mainText.updateLayoutParams {
             width = context.dp(if (isEmoji) emojiItemWidthDp() else defaultItemWidthDp())
             height = context.dp(if (isEmoji) emojiItemHeightDp() else defaultItemHeightDp())

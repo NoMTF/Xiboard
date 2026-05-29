@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.xiboard.R
 import com.xiboard.TrimeApplication
 import com.xiboard.core.Rime
@@ -130,6 +131,7 @@ object RimeDaemon {
         id: Int,
         buildAction: NotificationCompat.Builder.() -> Unit,
     ) {
+        if (!NotificationManagerCompat.from(appContext).areNotificationsEnabled()) return
         val builder =
             NotificationCompat
                 .Builder(appContext, CHANNEL_ID)

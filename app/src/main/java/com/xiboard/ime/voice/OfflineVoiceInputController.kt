@@ -6,6 +6,7 @@
 package com.xiboard.ime.voice
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioFormat
@@ -222,20 +223,29 @@ class OfflineVoiceInputController {
         provider = "cpu",
     )
 
+    @SuppressLint("MissingPermission")
     private fun initAudioRecord(): Boolean {
+        if (ContextCompat.checkSelfPermission(service, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            return false
+        }
         val minBufferSize = AudioRecord.getMinBufferSize(
             SAMPLE_RATE,
             AudioFormat.CHANNEL_IN_MONO,
             AudioFormat.ENCODING_PCM_16BIT,
         )
         if (minBufferSize <= 0) return false
-        audioRecord = AudioRecord(
-            MediaRecorder.AudioSource.MIC,
-            SAMPLE_RATE,
-            AudioFormat.CHANNEL_IN_MONO,
-            AudioFormat.ENCODING_PCM_16BIT,
-            minBufferSize * 2,
-        )
+        audioRecord = try {
+            AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                SAMPLE_RATE,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT,
+                minBufferSize * 2,
+            )
+        } catch (e: SecurityException) {
+            Timber.w(e, "Record audio permission was revoked before recorder creation")
+            return false
+        }
         return audioRecord?.state == AudioRecord.STATE_INITIALIZED
     }
 
@@ -679,8 +689,14 @@ private fun String.normalizeRecognitionSpacing(final: Boolean): String {
 
 private fun String.looksMostlyEnglish(): Boolean {
     val latin = count { it in 'A'..'Z' || it in 'a'..'z' }
-    val cjk = count { Character.UnicodeScript.of(it.code) == Character.UnicodeScript.HAN }
+    val cjk = count { it.isCjkIdeograph() }
     return latin > 0 && latin >= cjk * 2
+}
+
+private fun Char.isCjkIdeograph(): Boolean = code.let {
+    it in 0x3400..0x4DBF ||
+        it in 0x4E00..0x9FFF ||
+        it in 0xF900..0xFAFF
 }
 
 private fun String.comparableLength(): Int = count {

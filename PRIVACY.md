@@ -1,24 +1,21 @@
 <!--
-SPDX-FileCopyrightText: 2026 MTF Input Method contributors
+SPDX-FileCopyrightText: 2026 Xiboard contributors
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-## Privacy Policy
+## 隐私说明
 
-**MTF Input Method** is an offline Android input method based on Trime/Rime.
+**老习输入法** 是离线 Android 输入法。
 
-The app does not request Internet permission. Keyboard input, Rime dictionaries, user
-configuration, clipboard helpers, and offline voice recognition run locally on the
-device. The app does not upload typing history, voice audio, recognition text, or
-personal data to any server.
+应用不申请 `INTERNET` 权限。键盘输入、候选词、词库、剪贴板快捷入口、
+常用语、emoji、离线语音识别和本地配置都在设备本机运行。应用不会上传
+输入内容、语音音频、识别文本、剪贴板内容或个人数据到任何服务器。
 
-Permissions used by the app:
+当前使用的权限：
 
-* Storage: used to keep local Rime dictionaries, user data, themes, and configuration.
-* Microphone: used only when the user starts built-in offline voice input.
-* Notifications: used for local maintenance/deployment status notifications.
-* Vibration: used for optional key feedback.
+* 麦克风：仅在用户主动启动离线语音输入时使用。
+* 震动：用于按键触感反馈。
 
-Offline speech recognition uses a bundled sherpa-onnx Mandarin model stored in the
-APK assets. No model download or cloud speech service is used at runtime.
+离线语音识别使用 APK 内置的 sherpa-onnx 模型文件，运行时不下载模型，
+不调用云端语音服务。

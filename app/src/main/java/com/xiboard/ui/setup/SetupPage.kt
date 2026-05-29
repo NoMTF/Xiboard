@@ -9,7 +9,7 @@ import com.xiboard.R
 import com.xiboard.util.InputMethodUtils
 import com.xiboard.util.appContext
 import com.xiboard.util.isStorageAvailable
-import com.xiboard.util.requestExternalStoragePermission
+import com.xiboard.util.prepareLocalStorage
 
 enum class SetupPage {
     Permissions,
@@ -43,7 +43,7 @@ enum class SetupPage {
 
     fun getButtonAction(context: Context) {
         when (this) {
-            Permissions -> context.requestExternalStoragePermission()
+            Permissions -> context.prepareLocalStorage()
             Enable -> InputMethodUtils.showImeEnablerActivity(context)
             Select -> InputMethodUtils.showImePicker()
         }

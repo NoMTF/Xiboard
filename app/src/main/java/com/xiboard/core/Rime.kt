@@ -53,7 +53,7 @@ class Rime :
         private set
 
     private val dispatcher =
-            RimeDispatcher(
+        RimeDispatcher(
             object : RimeDispatcher.RimeController {
                 override fun nativeStartup(fullCheck: Boolean) {
                     startRime(fullCheck)

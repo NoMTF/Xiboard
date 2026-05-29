@@ -63,20 +63,19 @@ object ThemeManager {
         id: String,
         source: String,
         readText: () -> String,
-    ): Theme? =
-        try {
-            val node = Yaml.parseToYamlNode(readText())
-            val mapping = node.mapping
-            if (mapping == null) {
-                Timber.w("Failed to load theme '$id' from $source: YAML root is not a mapping")
-                null
-            } else {
-                Theme.decode(mapping)
-            }
-        } catch (e: Exception) {
-            Timber.w(e, "Failed to load theme '$id' from $source")
+    ): Theme? = try {
+        val node = Yaml.parseToYamlNode(readText())
+        val mapping = node.mapping
+        if (mapping == null) {
+            Timber.w("Failed to load theme '$id' from $source: YAML root is not a mapping")
             null
+        } else {
+            Theme.decode(mapping)
         }
+    } catch (e: Exception) {
+        Timber.w(e, "Failed to load theme '$id' from $source")
+        null
+    }
 
     private fun loadThemeByIdOrNull(id: String): Theme? {
         if (!Rime.deployRimeConfigFile(id, "config_version")) {

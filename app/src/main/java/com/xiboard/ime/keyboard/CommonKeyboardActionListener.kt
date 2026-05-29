@@ -27,10 +27,10 @@ import com.xiboard.ime.clipboard.ClipboardWindow
 import com.xiboard.ime.core.TrimeInputMethodService
 import com.xiboard.ime.dependency.InputDependencyManager
 import com.xiboard.ime.enums.Keycode
-import com.xiboard.ime.voice.OfflineVoiceInputController
 import com.xiboard.ime.switches.SwitchOptionWindow
 import com.xiboard.ime.symbol.LiquidData
 import com.xiboard.ime.symbol.LiquidWindow
+import com.xiboard.ime.voice.OfflineVoiceInputController
 import com.xiboard.ime.window.BoardWindowManager
 import com.xiboard.ui.main.settings.ColorPickerDialog
 import com.xiboard.ui.main.settings.SoundEffectPickerDialog

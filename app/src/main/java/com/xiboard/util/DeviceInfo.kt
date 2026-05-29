@@ -16,7 +16,25 @@ import com.xiboard.BuildConfig
 // Adapted from https://gist.github.com/hendrawd/01f215fd332d84793e600e7f82fc154b
 object DeviceInfo {
     fun get(context: Context) = buildString {
+        appendLine("--------- Build Info")
+        append(buildInfo())
+        appendLine()
         appendLine("--------- Device Info")
+        append(deviceInfo(context))
+    }
+
+    fun buildInfo() = buildString {
+        appendLine("Package Name: ${BuildConfig.APPLICATION_ID}")
+        appendLine("Builder: ${BuildConfig.BUILDER}")
+        appendLine("Version Code: ${BuildConfig.VERSION_CODE}")
+        appendLine("Version Name: ${Const.VERSION_NAME}")
+        appendLine("Build Type: ${BuildConfig.BUILD_TYPE}")
+        appendLine("Build Git Repo: ${BuildConfig.BUILD_GIT_REPO}")
+        appendLine("Build Time: ${iso8601UTCDateTime(BuildConfig.BUILD_TIMESTAMP)}")
+        appendLine("Build Git Hash: ${BuildConfig.BUILD_COMMIT_HASH}")
+    }
+
+    fun deviceInfo(context: Context) = buildString {
         appendLine("OS Name: ${Build.DISPLAY}")
         appendLine("OS Version: ${System.getProperty("os.version")} (${Build.VERSION.INCREMENTAL})")
         appendLine("OS API Level: ${Build.VERSION.SDK_INT}")
@@ -37,14 +55,5 @@ object DeviceInfo {
                 }
             }",
         )
-        appendLine("--------- Build Info")
-        appendLine("Package Name: ${BuildConfig.APPLICATION_ID}")
-        appendLine("Builder: ${BuildConfig.BUILDER}")
-        appendLine("Version Code: ${BuildConfig.VERSION_CODE}")
-        appendLine("Version Name: ${Const.VERSION_NAME}")
-        appendLine("Build Type: ${BuildConfig.BUILD_TYPE}")
-        appendLine("Build Git Repo: ${BuildConfig.BUILD_GIT_REPO}")
-        appendLine("Build Time: ${iso8601UTCDateTime(BuildConfig.BUILD_TIMESTAMP)}")
-        appendLine("Build Git Hash: ${BuildConfig.BUILD_COMMIT_HASH}")
     }
 }
