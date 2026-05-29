@@ -60,7 +60,8 @@ class TrimeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (!BuildConfig.DEBUG) {
-            Thread.setDefaultUncaughtExceptionHandler { _, e ->
+            val defaultCrashHandler = Thread.getDefaultUncaughtExceptionHandler()
+            Thread.setDefaultUncaughtExceptionHandler { thread, e ->
                 val crashTime = System.currentTimeMillis()
                 val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
                 val lastCrashTimePrefKey = "last_crash_time"
@@ -69,8 +70,7 @@ class TrimeApplication : Application() {
                     putLong(lastCrashTimePrefKey, crashTime)
                 }
                 if (crashTime - lastCrashTime <= 10_000L) {
-                    // continuous crashes within 10 seconds, maybe in a crash loop. just bail
-                    exitProcess(10)
+                    defaultCrashHandler?.uncaughtException(thread, e) ?: exitProcess(10)
                 }
                 startActivity(
                     Intent(applicationContext, LogActivity::class.java).apply {
@@ -88,7 +88,7 @@ class TrimeApplication : Application() {
                         putExtra(LogActivity.CRASH_STACK_TRACE, truncated)
                     },
                 )
-                exitProcess(10)
+                defaultCrashHandler?.uncaughtException(thread, e) ?: exitProcess(10)
             }
         }
         instance = this
