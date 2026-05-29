@@ -23,7 +23,7 @@ object DataManager {
 
     private const val DATA_CHECKSUMS_NAME = "checksums.json"
     private const val XIBOARD_RIME_MIGRATION_NAME = "xiboard-rime-migration.txt"
-    private const val XIBOARD_RIME_MIGRATION_VERSION = "rime-ice-mobile-v6"
+    private const val XIBOARD_RIME_MIGRATION_VERSION = "rime-ice-mobile-v16"
 
     private const val SCHEMA_LIST_CUSTOM_PATCH = """
       patch:
@@ -39,6 +39,10 @@ object DataManager {
     """
 
     private val lock = ReentrantLock()
+
+    @Volatile
+    var lastSyncRequiresFullDeploy = false
+        private set
 
     private val json by lazy { Json }
 
@@ -127,7 +131,7 @@ object DataManager {
             custom.writeText(SCHEMA_LIST_CUSTOM_PATCH.trimIndent())
         }
 
-        cleanStaleRimeBuildIfNeeded(oldChecksums, newChecksums)
+        lastSyncRequiresFullDeploy = cleanStaleRimeBuildIfNeeded(oldChecksums, newChecksums)
         mirrorRuntimeSharedFiles()
 
         Timber.d("Synced!")
@@ -147,7 +151,7 @@ object DataManager {
     private fun cleanStaleRimeBuildIfNeeded(
         oldChecksums: DataChecksums,
         newChecksums: DataChecksums,
-    ) {
+    ): Boolean {
         val marker = dataDir.resolve(XIBOARD_RIME_MIGRATION_NAME)
         val buildDir = userDataDir.resolve("build")
         val hasStaleBuild =
@@ -163,11 +167,12 @@ object DataManager {
                 oldChecksums.sha256 != newChecksums.sha256 ||
                 hasStaleBuild
 
-        if (!needsClean) return
+        if (!needsClean) return false
 
         FileUtils.delete(buildDir).getOrThrow()
         marker.writeText(XIBOARD_RIME_MIGRATION_VERSION)
         Timber.i("Cleared stale input build cache for Xiboard mobile schema")
+        return true
     }
 
     private fun File.isXiboardGeneratedSchemaPatch(): Boolean = runCatching {

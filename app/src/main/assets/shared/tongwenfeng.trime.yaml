@@ -936,10 +936,9 @@ liquid_keyboard:
       - space1
       - BackSpace
       - Return2
-      - quick_phrases
       - clipboard_window
       - liquid_keyboard_tabs
-  keyboards: [emoji, phrases, math, ascii, cn, history, symbollist, list, ids, symbol, tabs, pinyin, script_symbols, jp, grease, rusa, korea, lation, yinbiao, unit, yanwenzi, combing, emoji_full]  #tab列表
+  keyboards: [emoji, math, ascii, cn, history, symbollist, list, ids, symbol, tabs, pinyin, script_symbols, jp, grease, rusa, korea, lation, yinbiao, unit, yanwenzi, combing, emoji_full]  #tab列表
   tabs:
     name: 更多
     type: TABS
@@ -1413,7 +1412,7 @@ tool_bar:
     action: Zenkaku_Hankaku
 
   # 右侧按钮列表（从右向左排列）
-  buttons: [ *hide_button, *emoji_button, *phrase_button, *clipboard_button, *edit_button, *ascii_mode_button ]
+  buttons: [ *hide_button, *emoji_button, *clipboard_button, *edit_button ]
 
 #键盘布局
 preset_keyboards:

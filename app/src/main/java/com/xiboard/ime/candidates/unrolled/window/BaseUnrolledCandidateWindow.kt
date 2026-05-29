@@ -26,6 +26,7 @@ import com.xiboard.ime.candidates.compact.CompactCandidateDelegate
 import com.xiboard.ime.candidates.unrolled.CandidatesPagingSource
 import com.xiboard.ime.candidates.unrolled.PagingCandidateViewAdapter
 import com.xiboard.ime.candidates.unrolled.UnrolledCandidateLayout
+import com.xiboard.ime.correction.TypingCorrectionStats
 import com.xiboard.ime.core.InputView
 import com.xiboard.ime.core.TrimeInputMethodService
 import com.xiboard.ime.keyboard.KeyboardWindow
@@ -48,6 +49,7 @@ abstract class BaseUnrolledCandidateWindow :
     private val bar: InputBarDelegate by di.instance()
     private val windowManager: BoardWindowManager by di.instance()
     private val compactCandidate: CompactCandidateDelegate by di.instance()
+    private val typingCorrectionStats: TypingCorrectionStats by di.instance()
 
     private lateinit var lifecycleCoroutineScope: LifecycleCoroutineScope
     private lateinit var candidateLayout: UnrolledCandidateLayout
@@ -126,6 +128,7 @@ abstract class BaseUnrolledCandidateWindow :
     fun bindCandidateUiViewHolder(holder: CandidateViewHolder) {
         holder.itemView.run {
             setOnClickListener { _ ->
+                typingCorrectionStats.onCandidateSelected(holder.idx)
                 rime.launchOnReady { it.selectCandidate(holder.idx, global = true) }
             }
             setOnLongClickListener { view ->

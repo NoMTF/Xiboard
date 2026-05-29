@@ -10,6 +10,7 @@
 
 # Keep JNI interface
 -keep class com.xiboard.core.* { *; }
+-keep class com.k2fsa.sherpa.onnx.** { *; }
 
 # remove kotlin null checks
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {

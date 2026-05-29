@@ -44,6 +44,8 @@ engine:
     - fallback_segmentor
   translators:
     - punct_translator
+    - lua_translator@*mobile_sentence_corrector     # 长拼音/整句本地纠错召回
+    - lua_translator@*mobile_typo_phrase_translator  # 高频手机错拼短语召回
     - script_translator
     - lua_translator@*date_translator    # 时间、日期、星期
     - lua_translator@*lunar              # 农历
@@ -56,6 +58,8 @@ engine:
     - lua_filter@*corrector                         # 错音错字提示
     - lua_filter@*v_filter                          # v 模式 symbols 优先
     - lua_filter@*pin_cand_filter                   # 置顶候选项
+    - lua_filter@*mobile_typo_filter                # 移动端邻键/错拼轻量纠错
+    - lua_filter@*mobile_context_filter             # 本地上下文轻量重排
     - lua_filter@*long_word_filter                  # 长词优先（顺序要求：长词优先 > Emoji）
     - simplifier@emoji                              # Emoji
     - uniquifier                                    # 去重
@@ -89,6 +93,50 @@ uuid: uuid
 long_word_filter:
   count: 2
   idx: 4
+
+
+# Lua 配置：移动端轻量纠错
+# 仅重排 Rime 已经召回的候选，不联网、不跑大模型；限制扫描窗口以保护打字延迟和耗电。
+mobile_typo_phrase_translator:
+  min_input_len: 3
+  max_input_len: 18
+  max_paths: 4
+  max_candidates: 2
+  deadline_ms: 10
+  quality: 1
+  show_marker: true
+
+
+mobile_sentence_corrector:
+  min_input_len: 7
+  max_input_len: 42
+  min_sentence_input_len: 12
+  min_phrase_len: 2
+  min_segments: 2
+  max_segments: 8
+  max_candidates: 2
+  deadline_ms: 12
+  quality: 3
+  show_marker: true
+
+
+mobile_typo_filter:
+  min_input_len: 3
+  max_input_len: 18
+  deadline_ms: 8
+  max_scan: 24
+  max_promote: 3
+  max_variants: 5
+  show_marker: false
+
+
+# Lua 配置：本地小型中文搭配 reranker
+# 只重排 Rime top 20 候选，不参与全量生成；目标是候选排序，不做语法改写。
+mobile_context_filter:
+  deadline_ms: 8
+  max_scan: 20
+  max_promote: 2
+  model_file: mobile_lm_reranker.tsv
 
 
 # Lua 配置: 降低部分英语单词在候选项的位置。
@@ -131,16 +179,54 @@ reduce_english_filter:
 # Lua 配置: 置顶候选项
 # 注释太长了，请参考 pin_cand_filter.lua 开头的说明书。
 # pin_cand_filter.lua 末尾有常见编码可供直接复制参考
+pin_cand_filter_scan_limit: 48
+
 pin_cand_filter:
   # 格式：编码<Tab>字词1<Space>字词2……
   - d	的
   - m	吗 嘛  # 置顶一个来覆盖 custom_phrase.txt 呒(ḿ) 呣(ḿ)
   - hm	后面   # 置顶一个来覆盖 custom_phrase.txt 噷(hm)
+  - ni hao	你好
+  - hao duo	好多
+  - hai duo	好多
+  - hao de	好的
+  - mei shi	没事
+  - bu yong	不用
+  - xie xie	谢谢
+  - bu ke qi	不客气
+  - wei shen me	为什么
+  - zen me	怎么
+  - zen me le	怎么了
+  - wo jue de	我觉得
+  - kan yi xia	看一下
+  - deng yi xia	等一下
+  - ma fan	麻烦
+  - zhi dao	知道
+  - bu zhi dao	不知道
+  - yi hui er	一会儿
+  - cha bu duo	差不多
+  - you dian	有点
+  - mei you	没有
+  - ke yi	可以
+  - bu ke yi	不可以
+  - xian zai	现在
+  - jin tian	今天
+  - ming tian	明天
+  - zuo tian	昨天
+  - shen me	什么
+  - shi bu shi	是不是
+  - yao bu yao	要不要
+  - neng bu neng	能不能
 
 
 # 主翻译器，拼音
 translator:
   dictionary: rime_ice         # 挂载词库 rime_ice.dict.yaml
+  enable_sentence: true        # 开启整句路径，让长拼音串可以按上下文组句
+  enable_user_dict: true       # 本地用户词频学习，不联网
+  enable_encoder: true         # 允许将用户确认过的词组写入本地用户词典
+  encode_commit_history: true  # 根据本地提交历史优化后续候选
+  max_phrase_length: 6         # 控制移动端学习长度，避免过长短语拖慢候选刷新
   enable_word_completion: true # 大于 4 音节的词条自动补全，librime > 1.11.2
   spelling_hints: 4            # 保留少量提示，降低移动端候选刷新压力
   always_show_comments: false  # 关闭全量注释显示，减少打字延迟
@@ -277,8 +363,9 @@ speller:
     # 声母
     - derive/^([zcs])h/$1/          # zh* ch* sh* 派生出 z* c* s*
     - derive/^([zcs])([^h])/$1h$2/  # z* c* s*    派生出 zh* ch* sh*
-    - derive/^l/n/                  # l/n 有限模糊
-    - derive/^n/l/
+    # n/l、f/h 副作用较大，默认不做全局模糊；移动端邻键纠错路径会按需召回。
+    # - derive/^l/n/
+    # - derive/^n/l/
     # - derive/^f/h/
     # - derive/^h/f/
     # - derive/^l/r/
@@ -286,8 +373,8 @@ speller:
     # - derive/^g/k/
     # - derive/^k/g/
     # 韵母
-    # - derive/ang$/an/
-    # - derive/an$/ang/
+    - derive/ang$/an/
+    - derive/an$/ang/
     - derive/eng$/en/
     - derive/en$/eng/
     - derive/in$/ing/
@@ -333,7 +420,8 @@ speller:
     # 以防引入的其他词库没按照正确方式注音，也做一个转换
     - derive/^([nl])ue$/$1ve/
     - derive/^([jqxy])v/$1u/
-    - derive/^hao$/hai/                # hai'duo 这类邻近误触也能出“好多”
+    - derive/^gn$/ng/
+    - derive/^mg$/ng/
 
     ### 自动纠错
 ########## START 这几个有副作用的规则圈起来，方便取舍
@@ -354,6 +442,17 @@ speller:
     # # ian
     # - derive/([qtpdjlxbnm])ian$/$1ain/
 ########## END
+    # 低副作用手机错拼：只覆盖常见韵母缩写和末尾误触，不做全局字母换位。
+    - derive/uen$/un/
+    - derive/un$/uen/
+    - derive/uei$/ui/
+    - derive/ui$/uei/
+    - derive/iou$/iu/
+    - derive/iu$/iou/
+    - derive/ign$/ing/
+    - derive/img$/ing/
+    - derive/ng$/gn/
+    - derive/ng$/mg/
     # ai
     # - derive/^([wghk])ai$/$1ia/  # wia → wai
     # ei

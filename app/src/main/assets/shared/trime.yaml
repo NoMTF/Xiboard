@@ -729,10 +729,9 @@ liquid_keyboard:
       - space1
       - BackSpace
       - Return2
-      - quick_phrases
       - clipboard_window
       - liquid_keyboard_switch
-  keyboards: [emoji, phrases, math, ascii, cn, history, symbollist, list, ids, symbol, tabs, pinyin, script_symbols, jp, grease, rusa, korea, lation, yinbiao, unit, yanwenzi, combing, emoji_full]  #tab列表
+  keyboards: [emoji, math, ascii, cn, history, symbollist, list, ids, symbol, tabs, pinyin, script_symbols, jp, grease, rusa, korea, lation, yinbiao, unit, yanwenzi, combing, emoji_full]  #tab列表
   tabs:
     name: 更多
     type: TABS
@@ -1178,7 +1177,6 @@ tool_bar:
       normal: candidate_text_color
       padding: 10
     action: liquid_keyboard_emoji
-    long_press_action: VOICE_ASSIST
 
   hide_button: &hide_button
     foreground:
@@ -1216,7 +1214,7 @@ tool_bar:
       padding: 10
     action: Mode_switch
 
-  buttons: [ *hide_button, *emoji_button, *phrase_button, *clipboard_button, *ascii_mode_button ]
+  buttons: [ *hide_button, *emoji_button, *clipboard_button ]
 
 preset_keyboards:
   default:

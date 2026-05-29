@@ -28,6 +28,7 @@ import com.xiboard.ime.broadcast.EnterKeyDisplayDelegate
 import com.xiboard.ime.broadcast.InputBroadcaster
 import com.xiboard.ime.candidates.popup.PopupCandidatesMode
 import com.xiboard.ime.composition.PreeditDelegate
+import com.xiboard.ime.correction.TypingCorrectionStats
 import com.xiboard.ime.dependency.InputDependencyManager
 import com.xiboard.ime.keyboard.KeyboardPrefs.isLandscapeMode
 import com.xiboard.ime.keyboard.KeyboardWindow
@@ -99,6 +100,7 @@ class InputView(
     private val popup: PopupDelegate by di.instance()
     private val enterKeyDisplay: EnterKeyDisplayDelegate by di.instance()
     private val preedit: PreeditDelegate by di.instance()
+    private val typingCorrectionStats: TypingCorrectionStats by di.instance()
     private val windowManager: BoardWindowManager by di.instance()
     private val inputBar: InputBarDelegate by di.instance()
     private val keyboardWindow: KeyboardWindow by di.instance()
@@ -146,6 +148,7 @@ class InputView(
     init {
         // MUST call before any operation
         inputDepMgr.start()
+        service.bindTypingCorrectionStats(typingCorrectionStats)
 
         windowManager.cacheResidentWindow(keyboardWindow, createView = true)
         windowManager.cacheResidentWindow(liquidWindow)

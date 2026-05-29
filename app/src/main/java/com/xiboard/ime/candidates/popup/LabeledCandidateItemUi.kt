@@ -66,9 +66,10 @@ class LabeledCandidateItemUi(
                 inSpanWith(labelFg, ctx.sp(labelSize), labelFont) { append(candidate.label) }
                 append(" ")
                 inSpanWith(textFg, ctx.sp(textSize), textFont) { append(candidate.text) }
-                if (!candidate.comment.isNullOrBlank()) {
+                val displayComment = candidate.comment.orEmpty().toDisplayComment()
+                if (displayComment.isNotBlank()) {
                     append(" ")
-                    inSpanWith(commentFg, ctx.sp(commentSize), commentFont) { append(candidate.comment) }
+                    inSpanWith(commentFg, ctx.sp(commentSize), commentFont) { append(displayComment) }
                 }
             }
         val bg =
@@ -81,5 +82,23 @@ class LabeledCandidateItemUi(
                 }
             }
         root.background = bg
+    }
+
+    private fun String.toDisplayComment(): String = when {
+        startsWith(CORRECTION_COMMENT_PREFIX) || startsWith(STRONG_CORRECTION_COMMENT_PREFIX) -> CORRECTION_COMMENT_LABEL
+        startsWith(ASCII_CORRECTION_COMMENT_PREFIX) || startsWith(ASCII_STRONG_CORRECTION_COMMENT_PREFIX) -> CORRECTION_COMMENT_LABEL
+        startsWith(ASCII_SENTENCE_COMMENT_PREFIX) || startsWith(ASCII_STRONG_SENTENCE_COMMENT_PREFIX) -> SENTENCE_COMMENT_LABEL
+        else -> this
+    }
+
+    private companion object {
+        private const val CORRECTION_COMMENT_PREFIX = "纠 "
+        private const val STRONG_CORRECTION_COMMENT_PREFIX = "纠! "
+        private const val ASCII_CORRECTION_COMMENT_PREFIX = "@typo "
+        private const val ASCII_STRONG_CORRECTION_COMMENT_PREFIX = "@typo! "
+        private const val ASCII_SENTENCE_COMMENT_PREFIX = "@sent "
+        private const val ASCII_STRONG_SENTENCE_COMMENT_PREFIX = "@sent! "
+        private const val CORRECTION_COMMENT_LABEL = "纠"
+        private const val SENTENCE_COMMENT_LABEL = "句"
     }
 }

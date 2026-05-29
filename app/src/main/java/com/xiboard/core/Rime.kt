@@ -354,7 +354,10 @@ class Rime :
         }
         registerRimeMessageHandler(::handleRimeMessage)
         lifecycleRegistry.emitState(RimeLifecycle.State.STARTING)
-        dispatcher.start(!DataManager.prebuiltDataDir.resolve("default.yaml").exists())
+        dispatcher.start(
+            !DataManager.prebuiltDataDir.resolve("default.yaml").exists() ||
+                DataManager.lastSyncRequiresFullDeploy,
+        )
     }
 
     fun finalize() {

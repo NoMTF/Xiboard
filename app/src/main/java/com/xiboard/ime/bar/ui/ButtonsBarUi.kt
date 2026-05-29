@@ -54,10 +54,10 @@ class ButtonsBarUi(
     }
 
     init {
-        val buttons = theme.toolBar.buttons
+        val buttons = theme.toolBar.buttons.filterNot { it.action == HIDE_KEYBOARD_ACTION }
         firstButton = buttons.firstOrNull()?.let { toolButton(it) }
 
-        buttons.drop(1).forEach { config ->
+        buttons.forEach { config ->
             val button = toolButton(config)
             val size = getButtonSize(config)
             val lParams = FlexboxLayout.LayoutParams(size.first, size.second).apply {
@@ -79,5 +79,9 @@ class ButtonsBarUi(
 
     fun updateStyle() {
         root.children.forEach { (it as ToolButton).updateStyle() }
+    }
+
+    companion object {
+        private const val HIDE_KEYBOARD_ACTION = "Hide"
     }
 }

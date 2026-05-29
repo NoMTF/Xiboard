@@ -32,12 +32,14 @@ import com.xiboard.ime.window.BoardWindowManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -76,8 +78,17 @@ class OfflineVoiceInputController {
     @Volatile
     private var isFinishing = false
 
+    @Volatile
+    private var captureFailure: VoiceCaptureFailure? = null
+
+    @Volatile
+    private var sessionMessageRes: Int? = null
+
     var isHoldToTalkRecording = false
         private set
+
+    val isHoldToTalkActive: Boolean
+        get() = recordMode == RecordMode.HOLD && (isHoldToTalkRecording || isRecording || isFinishing || recordingJob?.isActive == true)
 
     fun toggle() {
         if (isRecording || isFinishing) {
@@ -109,14 +120,14 @@ class OfflineVoiceInputController {
     }
 
     fun stopHoldToTalk() {
-        if (isRecording || isFinishing || isHoldToTalkRecording) {
+        if (isHoldToTalkActive) {
             isHoldToTalkRecording = false
             stopRecording(commitResult = true, withGrace = true)
         }
     }
 
     fun cancelHoldToTalk() {
-        if (isRecording || isFinishing || isHoldToTalkRecording) {
+        if (isHoldToTalkActive) {
             isHoldToTalkRecording = false
             stopRecording(commitResult = false, withGrace = false)
         }
@@ -135,8 +146,10 @@ class OfflineVoiceInputController {
         shouldShowVoiceWindow = showVoiceWindow
         isRecording = true
         isFinishing = false
+        captureFailure = null
+        sessionMessageRes = null
         stopRequestedAt = 0L
-        Timber.d("Offline voice start requested: mode=$recordMode, model=${voiceProfile.id}, showWindow=$showVoiceWindow")
+        Timber.i("Offline voice start requested: mode=$recordMode, model=${voiceProfile.id}, showWindow=$showVoiceWindow")
         updateUi(VoiceUiStatus.LISTENING, "")
         if (shouldShowVoiceWindow) {
             attachVoiceWindow()
@@ -152,7 +165,12 @@ class OfflineVoiceInputController {
                 }
             }
             if (!initialized) {
+                val failedCapture = captureFailure ?: VoiceCaptureFailure.START_FAILED
+                val commitStoppedHold = shouldCommitResult
+                val restoreKeyboard = shouldShowVoiceWindow
                 isHoldToTalkRecording = false
+                cleanupRecorder()
+                finishEmptySession(commitStoppedHold, restoreKeyboard, failedCapture.messageRes)
                 return@launch
             }
             if (!shouldContinueRecording()) {
@@ -182,7 +200,7 @@ class OfflineVoiceInputController {
     }
 
     private fun stopRecording(commitResult: Boolean, withGrace: Boolean) {
-        Timber.d("Offline voice stop requested: commit=$commitResult, grace=$withGrace, recording=$isRecording")
+        Timber.i("Offline voice stop requested: commit=$commitResult, grace=$withGrace, recording=$isRecording")
         shouldCommitResult = commitResult
         isRecording = false
         isFinishing = commitResult && withGrace
@@ -234,19 +252,46 @@ class OfflineVoiceInputController {
             AudioFormat.ENCODING_PCM_16BIT,
         )
         if (minBufferSize <= 0) return false
-        audioRecord = try {
-            AudioRecord(
-                MediaRecorder.AudioSource.MIC,
-                SAMPLE_RATE,
-                AudioFormat.CHANNEL_IN_MONO,
-                AudioFormat.ENCODING_PCM_16BIT,
-                minBufferSize * 2,
-            )
-        } catch (e: SecurityException) {
-            Timber.w(e, "Record audio permission was revoked before recorder creation")
-            return false
+        val bufferSize = (minBufferSize * 4).coerceAtLeast(SAMPLE_RATE * 2)
+        for (source in AUDIO_SOURCES) {
+            val recorder = try {
+                AudioRecord(
+                    source,
+                    SAMPLE_RATE,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    bufferSize,
+                )
+            } catch (e: SecurityException) {
+                Timber.w(e, "Record audio permission was revoked before recorder creation")
+                captureFailure = VoiceCaptureFailure.START_FAILED
+                return false
+            } catch (e: RuntimeException) {
+                Timber.w(e, "Failed to create offline voice recorder for source=${audioSourceName(source)}")
+                continue
+            }
+            if (recorder.state != AudioRecord.STATE_INITIALIZED) {
+                Timber.w("Offline voice recorder source=${audioSourceName(source)} was not initialized: state=${recorder.state}")
+                runCatching { recorder.release() }
+                continue
+            }
+            val started = runCatching {
+                recorder.startRecording()
+                recorder.recordingState == AudioRecord.RECORDSTATE_RECORDING
+            }.getOrElse {
+                Timber.w(it, "Offline voice recorder source=${audioSourceName(source)} failed during start")
+                false
+            }
+            if (started) {
+                audioRecord = recorder
+                Timber.i("Offline voice recorder active: source=${audioSourceName(source)}, buffer=$bufferSize")
+                return true
+            }
+            Timber.w("Offline voice recorder source=${audioSourceName(source)} failed to start: state=${recorder.recordingState}")
+            runCatching { recorder.release() }
         }
-        return audioRecord?.state == AudioRecord.STATE_INITIALIZED
+        captureFailure = VoiceCaptureFailure.START_FAILED
+        return false
     }
 
     private suspend fun recordAndRecognize(shouldRestoreKeyboard: Boolean) = coroutineScope {
@@ -262,12 +307,16 @@ class OfflineVoiceInputController {
         var lastDecodeAt = 0L
 
         runCatching {
-            val currentRecognizer = waitForRecognizer()
+            warmUp()
+            var currentRecognizer = currentRecognizerOrNull()
             var captureFinished = false
             while (!captureFinished || audioQueue.isNotEmpty()) {
+                if (currentRecognizer == null) {
+                    currentRecognizer = currentRecognizerOrNull()
+                }
                 val samples = audioQueue.poll(AUDIO_QUEUE_POLL_MS, TimeUnit.MILLISECONDS)
                 if (samples == null) {
-                    if (shouldDecodePartial(lastDecodeAt, audio.size)) {
+                    if (currentRecognizer != null && shouldDecodePartial(lastDecodeAt, audio.size)) {
                         lastDecodeAt = SystemClock.elapsedRealtime()
                         displayedText = decodeAudio(currentRecognizer, audio, partial = true, displayedText)
                     }
@@ -278,18 +327,19 @@ class OfflineVoiceInputController {
                     continue
                 }
                 samples.forEach { audio.add(it) }
-                if (shouldDecodePartial(lastDecodeAt, audio.size)) {
+                if (currentRecognizer != null && !isFinishing && shouldDecodePartial(lastDecodeAt, audio.size)) {
                     lastDecodeAt = SystemClock.elapsedRealtime()
                     displayedText = decodeAudio(currentRecognizer, audio, partial = true, displayedText)
                 }
             }
-            finalText = remainingFinalizeBudgetMs()
-                .takeIf { it > 0L }
-                ?.let { budgetMs ->
-                    withTimeoutOrNull(budgetMs) {
-                        decodeAudio(currentRecognizer, audio, partial = false, displayedText)
-                    }
-                } ?: displayedText
+            if (currentRecognizer == null) {
+                currentRecognizer = waitForRecognizerWithinBudget(displayedText)
+            }
+            if (currentRecognizer != null) {
+                finalText = decodeFinalWithinBudget(currentRecognizer, audio, displayedText)
+            } else {
+                finalText = displayedText
+            }
         }.onFailure {
             Timber.e(it, "Offline voice recognition failed")
             recognitionFailed = true
@@ -306,6 +356,8 @@ class OfflineVoiceInputController {
             return@coroutineScope
         }
         val commitResult = shouldCommitResult
+        val failedCapture = captureFailure
+        val messageRes = sessionMessageRes
         cleanupRecorder()
         service.lifecycleScope.launch {
             if (commitResult && finalText.isNotEmpty()) {
@@ -313,7 +365,8 @@ class OfflineVoiceInputController {
             } else {
                 service.finishVoiceComposingText("")
                 if (commitResult) {
-                    Toast.makeText(service, R.string.offline_voice_empty, Toast.LENGTH_SHORT).show()
+                    val message = failedCapture?.messageRes ?: messageRes ?: R.string.offline_voice_empty
+                    Toast.makeText(service, message, Toast.LENGTH_SHORT).show()
                 }
             }
             updateUi(VoiceUiStatus.IDLE, "")
@@ -330,11 +383,19 @@ class OfflineVoiceInputController {
         val buffer = ShortArray((SAMPLE_RATE * READ_INTERVAL_SECONDS).toInt())
         var quietSince = 0L
         runCatching {
-            recorder.startRecording()
-            Timber.d("Offline voice recorder active")
-            while (shouldContinueRecording()) {
+            if (recorder.recordingState != AudioRecord.RECORDSTATE_RECORDING) {
+                captureFailure = VoiceCaptureFailure.START_FAILED
+                Timber.e("Offline voice recorder failed to start: state=${recorder.recordingState}")
+                return@runCatching
+            }
+            while (shouldContinueRecording() && serviceScope.isActive) {
                 val read = recorder.read(buffer, 0, buffer.size)
-                if (read <= 0) continue
+                if (read < 0) {
+                    captureFailure = VoiceCaptureFailure.READ_FAILED
+                    Timber.e("Offline voice recorder read failed: code=$read")
+                    break
+                }
+                if (read == 0) continue
                 val samples = FloatArray(read) { buffer[it] / PCM_16BIT_SCALE }
                 audioQueue.offer(samples)
                 if (isFinishing) {
@@ -349,13 +410,14 @@ class OfflineVoiceInputController {
             }
         }.onFailure {
             if (shouldCommitResult) {
+                captureFailure = VoiceCaptureFailure.READ_FAILED
                 Timber.e(it, "Offline voice audio capture failed")
             } else {
                 Timber.d(it, "Offline voice audio capture cancelled")
             }
         }
         audioQueue.offer(END_OF_AUDIO)
-        Timber.d("Offline voice recorder stopped")
+        Timber.i("Offline voice recorder stopped")
     }
 
     private suspend fun waitForRecognizer(): OfflineRecognizer {
@@ -363,6 +425,25 @@ class OfflineVoiceInputController {
             runCatching { job.join() }
         }
         return ensureRecognizer()
+    }
+
+    private fun currentRecognizerOrNull(): OfflineRecognizer? = synchronized(recognizerLock) {
+        recognizer
+    }
+
+    private suspend fun waitForRecognizerWithinBudget(previousText: String): OfflineRecognizer? {
+        val budgetMs = if (isFinishing) remainingFinalizeBudgetMs() else START_RECOGNIZER_TIMEOUT_MS
+        if (budgetMs <= 0L) return null
+        warmUp()
+        return withTimeoutOrNull(budgetMs) {
+            warmUpJob?.takeIf { it.isActive }?.join()
+            currentRecognizerOrNull()
+        }.also { recognizer ->
+            if (recognizer == null) {
+                sessionMessageRes = R.string.offline_voice_model_loading
+                Timber.w("Offline voice recognizer wait timed out after ${budgetMs}ms; committing live text length=${previousText.length}")
+            }
+        }
     }
 
     private suspend fun decodeAudio(
@@ -382,15 +463,56 @@ class OfflineVoiceInputController {
         return previousText
     }
 
+    private suspend fun decodeFinalWithinBudget(
+        recognizer: OfflineRecognizer,
+        audio: List<Float>,
+        previousText: String,
+    ): String {
+        val budgetMs = remainingFinalizeBudgetMs()
+        if (budgetMs <= 0L || audio.size < MIN_DECODE_SAMPLES) return previousText
+
+        val finalDecode = service.lifecycleScope.async(Dispatchers.IO) {
+            decodeAudioSnapshot(
+                recognizer = recognizer,
+                audio = audio,
+                partial = false,
+                maxDecodeSecondsOverride = FINAL_DECODE_MAX_SECONDS,
+            ).toDisplayText(final = true)
+        }
+        val text = withTimeoutOrNull(budgetMs) {
+            finalDecode.await()
+        }
+        if (text == null) {
+            Timber.w("Offline voice final decode timed out after ${budgetMs}ms; committing live text")
+            finalDecode.invokeOnCompletion { throwable ->
+                if (throwable != null) {
+                    Timber.w(throwable, "Offline voice late final decode failed")
+                }
+            }
+            return previousText
+        }
+
+        if (text.isBlank()) return previousText
+        val previousLength = previousText.comparableLength()
+        val finalLength = text.comparableLength()
+        return if (previousLength > 0 && finalLength < previousLength * MIN_FINAL_REPLACE_RATIO) {
+            previousText
+        } else {
+            text
+        }
+    }
+
     private fun decodeAudioSnapshot(
         recognizer: OfflineRecognizer,
         audio: List<Float>,
         partial: Boolean,
+        maxDecodeSecondsOverride: Int? = null,
     ): RecognitionSnapshot {
         if (audio.size < MIN_DECODE_SAMPLES) return RecognitionSnapshot.EMPTY
-        val maxSamples = voiceProfile.maxDecodeSeconds * SAMPLE_RATE
-        val start = if (partial) (audio.size - maxSamples).coerceAtLeast(0) else 0
-        val limit = min(audio.size - start, if (partial) maxSamples else audio.size)
+        val maxSamples = (maxDecodeSecondsOverride ?: voiceProfile.maxDecodeSeconds) * SAMPLE_RATE
+        val shouldLimitWindow = partial || maxDecodeSecondsOverride != null
+        val start = if (shouldLimitWindow) (audio.size - maxSamples).coerceAtLeast(0) else 0
+        val limit = min(audio.size - start, if (shouldLimitWindow) maxSamples else audio.size)
         val samples = FloatArray(limit)
         for (i in 0 until limit) {
             samples[i] = audio[start + i]
@@ -417,11 +539,12 @@ class OfflineVoiceInputController {
     private fun finishEmptySession(
         commitResult: Boolean,
         restoreKeyboard: Boolean,
+        messageRes: Int = R.string.offline_voice_empty,
     ) {
         service.lifecycleScope.launch {
             service.finishVoiceComposingText("")
             if (commitResult) {
-                Toast.makeText(service, R.string.offline_voice_empty, Toast.LENGTH_SHORT).show()
+                Toast.makeText(service, messageRes, Toast.LENGTH_SHORT).show()
             }
             updateUi(VoiceUiStatus.IDLE, "")
             if (restoreKeyboard) {
@@ -481,6 +604,8 @@ class OfflineVoiceInputController {
         recordingJob = null
         shouldShowVoiceWindow = false
         stopRequestedAt = 0L
+        captureFailure = null
+        sessionMessageRes = null
     }
 
     private fun attachVoiceWindow() {
@@ -495,9 +620,21 @@ class OfflineVoiceInputController {
         }
     }
 
+    private fun audioSourceName(source: Int): String = when (source) {
+        MediaRecorder.AudioSource.VOICE_RECOGNITION -> "VOICE_RECOGNITION"
+        MediaRecorder.AudioSource.MIC -> "MIC"
+        MediaRecorder.AudioSource.DEFAULT -> "DEFAULT"
+        else -> source.toString()
+    }
+
     private enum class RecordMode {
         TOGGLE,
         HOLD,
+    }
+
+    private enum class VoiceCaptureFailure(val messageRes: Int) {
+        START_FAILED(R.string.offline_voice_record_start_failed),
+        READ_FAILED(R.string.offline_voice_record_read_failed),
     }
 
     companion object {
@@ -507,12 +644,20 @@ class OfflineVoiceInputController {
         private const val PCM_16BIT_SCALE = 32768.0f
         private const val FINAL_GRACE_MS = 400L
         private const val FINALIZE_TOTAL_TIMEOUT_MS = 1500L
+        private const val FINAL_DECODE_MAX_SECONDS = 8
+        private const val START_RECOGNIZER_TIMEOUT_MS = 2500L
         private const val FINAL_SILENCE_MS = 450L
         private const val FINAL_SILENCE_RMS = 0.0065
         private const val AUDIO_QUEUE_POLL_MS = 50L
         private const val MIN_DECODE_SAMPLES = SAMPLE_RATE / 2
+        private const val MIN_FINAL_REPLACE_RATIO = 0.65
         private const val PARTIAL_UI_SETTLE_MS = 8L
         private val END_OF_AUDIO = FloatArray(0)
+        private val AUDIO_SOURCES = intArrayOf(
+            MediaRecorder.AudioSource.VOICE_RECOGNITION,
+            MediaRecorder.AudioSource.MIC,
+            MediaRecorder.AudioSource.DEFAULT,
+        )
     }
 }
 

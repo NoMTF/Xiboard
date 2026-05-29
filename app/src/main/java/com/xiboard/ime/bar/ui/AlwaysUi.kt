@@ -66,11 +66,13 @@ class AlwaysUi(
 
     val inlineSuggestionsUi = InlineSuggestionsUi(ctx)
 
-    val hideKeyboardButton = ToolButton(ctx, R.drawable.ic_baseline_arrow_drop_down_24)
+    val hideKeyboardButton = toolButton(
+        theme.toolBar.buttons.firstOrNull { it.action == HIDE_KEYBOARD_ACTION },
+        R.drawable.ic_baseline_arrow_drop_down_24,
+    )
     private val rightMostButton =
         ViewAnimator(ctx).apply {
             add(hideKeyboardButton, lParams(matchParent, matchParent))
-            buttonsUi.firstButton?.let { add(it, lParams(matchParent, matchParent)) }
         }
 
     private val leftMostButton = toolButton(
@@ -118,7 +120,7 @@ class AlwaysUi(
 
     fun updateButtonsStyle() {
         leftMostButton.updateStyle()
-        buttonsUi.firstButton?.updateStyle()
+        hideKeyboardButton.updateStyle()
         buttonsUi.updateStyle()
     }
 
@@ -131,9 +133,7 @@ class AlwaysUi(
     }
 
     private fun updateRightMostButton(state: State) {
-        val hasFirstButton = buttonsUi.firstButton != null
-        val showFirst = hasFirstButton && (theme.toolBar.buttons.isNotEmpty() || state != State.Toolbar)
-        rightMostButton.displayedChild = if (showFirst) 1 else 0
+        rightMostButton.displayedChild = 0
     }
 
     private fun updateLeftMostButton(state: State) {
@@ -149,5 +149,9 @@ class AlwaysUi(
             width = buttonWidth
             height = buttonHeight
         }
+    }
+
+    companion object {
+        private const val HIDE_KEYBOARD_ACTION = "Hide"
     }
 }

@@ -14,6 +14,7 @@ import com.xiboard.ime.broadcast.InputBroadcastReceiver
 import com.xiboard.ime.broadcast.InputBroadcaster
 import com.xiboard.ime.candidates.compact.CompactCandidateDelegate
 import com.xiboard.ime.composition.PreeditDelegate
+import com.xiboard.ime.correction.TypingCorrectionStats
 import com.xiboard.ime.core.InputView
 import com.xiboard.ime.core.TrimeInputMethodService
 import com.xiboard.ime.keyboard.CommonKeyboardActionListener
@@ -46,6 +47,7 @@ class InputDependencyManager(
         bindSingleton { EnterKeyDisplayDelegate() }
         bindSingleton { PreeditDelegate() }
         bindSingleton { CommonKeyboardActionListener() }
+        bindSingleton { TypingCorrectionStats() }
         bindSingleton { BoardWindowManager() }
         bindSingleton { InputBarDelegate() }
         bindSingleton { CompactCandidateDelegate() }

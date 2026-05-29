@@ -49,6 +49,7 @@ import com.xiboard.data.theme.ColorManager
 import com.xiboard.data.theme.Theme
 import com.xiboard.data.theme.ThemeManager
 import com.xiboard.ime.composition.CandidatesView
+import com.xiboard.ime.correction.TypingCorrectionStats
 import com.xiboard.ime.keyboard.InputFeedbackManager
 import com.xiboard.receiver.RimeIntentReceiver
 import com.xiboard.util.any
@@ -90,6 +91,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private var lastCommittedText: String = ""
 
     private var composingText: String = ""
+
+    private var typingCorrectionStats: TypingCorrectionStats? = null
 
     private var cursorUpdateIndex = 0
 
@@ -573,6 +576,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         InputFeedbackManager.finishInput()
     }
 
+    fun bindTypingCorrectionStats(stats: TypingCorrectionStats) {
+        typingCorrectionStats = stats
+    }
+
     fun commitText(text: String) {
         val ic = currentInputConnection ?: return
 
@@ -584,6 +591,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         }
         lastCommittedText = text
         composingText = ""
+        typingCorrectionStats?.onCommitted(text)
         InputFeedbackManager.textCommitSpeak(text)
     }
 
@@ -612,6 +620,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             ic.setComposingText(finalText, 1)
             ic.finishComposingText()
             lastCommittedText = finalText
+            typingCorrectionStats?.onCommitted(finalText)
             InputFeedbackManager.textCommitSpeak(finalText)
         }
         composingText = ""

@@ -224,6 +224,9 @@
     <string name="offline_voice_recording">正在离线识别，按住空格说话，松开上屏</string>
     <string name="offline_voice_processing">正在处理语音...</string>
     <string name="offline_voice_empty">未识别到语音</string>
+    <string name="offline_voice_record_start_failed">麦克风没有启动，请检查模拟器麦克风或录音权限</string>
+    <string name="offline_voice_record_read_failed">录音读取失败，请重试</string>
+    <string name="offline_voice_model_loading">语音模型仍在加载，请稍后再试</string>
     <string name="offline_voice_model_missing">离线语音模型缺失</string>
     <string name="offline_voice_permission_denied">离线语音输入需要麦克风权限</string>
     <string name="offline_voice_error">离线语音输入失败：%1$s</string>

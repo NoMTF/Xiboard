@@ -25,6 +25,7 @@ import com.xiboard.data.theme.KeyActionManager
 import com.xiboard.data.theme.ThemeManager
 import com.xiboard.ime.clipboard.ClipboardWindow
 import com.xiboard.ime.core.TrimeInputMethodService
+import com.xiboard.ime.correction.TypingCorrectionStats
 import com.xiboard.ime.dependency.InputDependencyManager
 import com.xiboard.ime.enums.Keycode
 import com.xiboard.ime.switches.SwitchOptionWindow
@@ -58,6 +59,7 @@ class CommonKeyboardActionListener {
     private val keyboardWindow: KeyboardWindow by di.instance()
     private val liquidWindow: LiquidWindow by di.instance()
     private val offlineVoiceInputController: OfflineVoiceInputController by di.instance()
+    private val typingCorrectionStats: TypingCorrectionStats by di.instance()
 
     private val prefs = AppPrefs.defaultInstance()
 
@@ -114,17 +116,16 @@ class CommonKeyboardActionListener {
             }
 
             override fun onLongPress(keyEventCode: Int) {
-                if (keyEventCode == KeyEvent.KEYCODE_SPACE && prefs.general.offlineVoiceInput.getValue()) {
+                if (keyEventCode.isHoldToTalkKey() && prefs.general.offlineVoiceInput.getValue()) {
                     offlineVoiceInputController.startHoldToTalk()
                 }
             }
 
             override fun onRelease(keyEventCode: Int) {
-                if (keyEventCode == KeyEvent.KEYCODE_SPACE &&
-                    prefs.general.offlineVoiceInput.getValue() &&
-                    offlineVoiceInputController.isHoldToTalkRecording
-                ) {
-                    offlineVoiceInputController.stopHoldToTalk()
+                if (keyEventCode.isHoldToTalkKey() && prefs.general.offlineVoiceInput.getValue()) {
+                    if (offlineVoiceInputController.isHoldToTalkActive) {
+                        offlineVoiceInputController.stopHoldToTalk()
+                    }
                     return
                 }
                 if (shouldReleaseKey) {
@@ -139,7 +140,7 @@ class CommonKeyboardActionListener {
             }
 
             override fun onCancel(keyEventCode: Int) {
-                if (keyEventCode == KeyEvent.KEYCODE_SPACE && prefs.general.offlineVoiceInput.getValue()) {
+                if (keyEventCode.isHoldToTalkKey() && prefs.general.offlineVoiceInput.getValue()) {
                     offlineVoiceInputController.cancelHoldToTalk()
                 }
             }
@@ -391,6 +392,9 @@ class CommonKeyboardActionListener {
                 metaState: Int,
             ) {
                 shouldReleaseKey = false
+                if (keyEventCode == KeyEvent.KEYCODE_DEL) {
+                    typingCorrectionStats.onBackspace()
+                }
                 val value =
                     RimeKeyMapping
                         .keyCodeToVal(keyEventCode)
@@ -470,5 +474,7 @@ class CommonKeyboardActionListener {
         private val UNBRACED_CHAR = """^((\{Escape\})?[^{}]+).*$""".toRegex()
 
         private val PLACEHOLDER_PATTERN = Regex(".*(%([1-4]\\$)?s).*")
+
+        private fun Int.isHoldToTalkKey(): Boolean = this == KeyEvent.KEYCODE_SPACE || this == KeyEvent.KEYCODE_VOICE_ASSIST
     }
 }

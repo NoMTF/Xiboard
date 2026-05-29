@@ -61,6 +61,8 @@ local M = {}
 
 function M.init(env)
     env.name_space = env.name_space:gsub("^*", "")
+    local scan_limit = env.engine.schema.config:get_int(env.name_space .. "_scan_limit")
+    env.scan_limit = scan_limit or 48
 
     if env.pin_cands ~= nil then return end
 
@@ -185,8 +187,10 @@ function M.func(input, env)
     local pined = {}  -- 提升的候选项
     local others = {} -- 其余候选项
     local pined_count = 0
+    local scanned = 0
 
     for cand in input:iter() do
+        scanned = scanned + 1
         local preedit = cand.preedit:gsub(" ", "") -- 对比去掉空格的 cand.preedit
         local texts = env.pin_cands[preedit]
 
@@ -214,8 +218,8 @@ function M.func(input, env)
             else
                 table.insert(others, cand)
             end
-            -- 找齐了或查询超过 100 个就不找了（如果要提升的候选项不在前 100 则不会被提升）
-            if pined_count == #texts or #others > 100 then
+            -- 找齐了或超过移动端扫描上限就不找了，避免每次按键扫太深造成延迟。
+            if pined_count == #texts or scanned >= env.scan_limit then
                 break
             end
         end

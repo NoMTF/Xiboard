@@ -225,6 +225,9 @@
     <string name="offline_voice_recording">Listening offline. Hold Space to speak, release to commit.</string>
     <string name="offline_voice_processing">Processing speech...</string>
     <string name="offline_voice_empty">No speech recognized</string>
+    <string name="offline_voice_record_start_failed">Microphone did not start. Check emulator microphone settings or app permission.</string>
+    <string name="offline_voice_record_read_failed">Microphone recording failed. Please try again.</string>
+    <string name="offline_voice_model_loading">Voice model is still loading. Try again in a moment.</string>
     <string name="offline_voice_model_missing">Offline voice model is missing from app assets</string>
     <string name="offline_voice_permission_denied">Microphone permission is required for offline voice input</string>
     <string name="offline_voice_error">Offline voice input failed: %1$s</string>

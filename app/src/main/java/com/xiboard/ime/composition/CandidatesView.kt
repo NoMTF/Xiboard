@@ -27,9 +27,11 @@ import com.xiboard.data.prefs.AppPrefs
 import com.xiboard.data.theme.ColorManager
 import com.xiboard.data.theme.Theme
 import com.xiboard.ime.candidates.popup.PagedCandidatesUi
+import com.xiboard.ime.correction.TypingCorrectionStats
 import com.xiboard.ime.core.BaseInputView
 import com.xiboard.ime.core.TouchEventReceiverWindow
 import com.xiboard.ime.core.TrimeInputMethodService
+import com.xiboard.ime.dependency.InputDependencyManager
 import splitties.dimensions.dp
 import splitties.views.dsl.constraintlayout.below
 import splitties.views.dsl.constraintlayout.bottomOfParent
@@ -44,6 +46,7 @@ import splitties.views.dsl.core.wrapContent
 import splitties.views.horizontalPadding
 import splitties.views.setPaddingDp
 import splitties.views.verticalPadding
+import org.kodein.di.instance
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor")
@@ -64,6 +67,7 @@ class CandidatesView(
     private val parentSize = floatArrayOf(0f, 0f)
 
     private var shouldUpdatePosition = false
+    private val typingCorrectionStats: TypingCorrectionStats by InputDependencyManager.getInstance().di.instance()
 
     /**
      * layout update may or may not cause [CandidatesView]'s size [onSizeChanged],
@@ -99,7 +103,10 @@ class CandidatesView(
         PagedCandidatesUi(
             ctx,
             theme,
-            onCandidateClick = { index -> rime.launchOnReady { it.selectCandidate(index, global = false) } },
+            onCandidateClick = { index ->
+                typingCorrectionStats.onCandidateSelected(index)
+                rime.launchOnReady { it.selectCandidate(index, global = false) }
+            },
             onCandidateAction = { index, text, view -> showCandidateActionMenu(index, text, view, global = false) },
             onPrevPage = { rime.launchOnReady { it.changeCandidatePage(true) } },
             onNextPage = { rime.launchOnReady { it.changeCandidatePage(false) } },

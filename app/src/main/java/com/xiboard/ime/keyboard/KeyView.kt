@@ -66,6 +66,12 @@ class KeyView(
     private val cachedLocation = intArrayOf(0, 0)
     private val cachedBounds = Rect()
     private var boundsValid = false
+    private val isHoldToTalkKey: Boolean
+        get() {
+            if (key.code != KeyEvent.KEYCODE_SPACE) return false
+            val longClick = key.longClick
+            return longClick == null || longClick.code == KeyEvent.KEYCODE_VOICE_ASSIST
+        }
 
     val bounds: Rect
         get() = cachedBounds.also {
@@ -83,7 +89,7 @@ class KeyView(
         isRepeatable = key.click?.isRepeatable ?: false
         isSlideCursor = key.click?.isSlideCursor ?: false
         isSlideDelete = key.click?.isSlideDelete ?: false
-        hasLongPress = key.hasAction(KeyBehavior.LONG_CLICK) || key.code == KeyEvent.KEYCODE_SPACE
+        hasLongPress = key.hasAction(KeyBehavior.LONG_CLICK) || isHoldToTalkKey
         hasDouble = key.hasAction(KeyBehavior.DOUBLE_CLICK)
         hasLazyDouble = key.hasAction(KeyBehavior.LAZY_DOUBLE_CLICK)
         hasPopup = key.popup.isNotEmpty()
@@ -97,8 +103,8 @@ class KeyView(
 
         onRelease = release@{ behavior, isFromLongPress ->
             Timber.d("KeyView release: label=${key.getLabel()}, behavior=$behavior, fromLongPress=$isFromLongPress")
-            if (key.code == KeyEvent.KEYCODE_SPACE && isFromLongPress) {
-                keyboardActionListener.onRelease(key.code)
+            if (isFromLongPress && isHoldToTalkKey) {
+                keyboardActionListener.onRelease(KeyEvent.KEYCODE_VOICE_ASSIST)
                 setPressedState(false)
                 dismissPopupPreview()
                 if (keyboard.firstPressedKeyIndex == id) keyboard.firstPressedKeyIndex = -1
@@ -168,8 +174,8 @@ class KeyView(
         }
 
         onLongClick = {
-            if (key.code == KeyEvent.KEYCODE_SPACE) {
-                keyboardActionListener.onLongPress(key.code)
+            if (isHoldToTalkKey) {
+                keyboardActionListener.onLongPress(KeyEvent.KEYCODE_VOICE_ASSIST)
                 dismissPopupPreview()
             } else if (key.popup.isNotEmpty()) {
                 dismissPopupPreview()
@@ -191,7 +197,7 @@ class KeyView(
 
         onCancel = {
             deletedTextBuffer.clear()
-            keyboardActionListener.onCancel(key.code)
+            keyboardActionListener.onCancel(if (isHoldToTalkKey) KeyEvent.KEYCODE_VOICE_ASSIST else key.code)
             setPressedState(false)
             dismissPopupPreview()
         }

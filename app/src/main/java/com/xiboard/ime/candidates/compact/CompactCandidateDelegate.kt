@@ -23,6 +23,7 @@ import com.xiboard.ime.bar.InputBarDelegate
 import com.xiboard.ime.bar.UnrollButtonStateMachine
 import com.xiboard.ime.broadcast.InputBroadcastReceiver
 import com.xiboard.ime.candidates.unrolled.decoration.FlexboxVerticalDecoration
+import com.xiboard.ime.correction.TypingCorrectionStats
 import com.xiboard.ime.core.InputView
 import com.xiboard.ime.core.TrimeInputMethodService
 import com.xiboard.ime.dependency.InputDependencyManager
@@ -42,6 +43,7 @@ class CompactCandidateDelegate : InputBroadcastReceiver {
     val theme: Theme by di.instance()
     private val inputView: InputView by di.instance()
     val bar: InputBarDelegate by di.instance()
+    private val typingCorrectionStats: TypingCorrectionStats by di.instance()
 
     private val fillStyle by AppPrefs.defaultInstance().keyboard.horizontalCandidateMode
 
@@ -92,6 +94,7 @@ class CompactCandidateDelegate : InputBroadcastReceiver {
     val adapter by lazy {
         CompactCandidateViewAdapter(theme).apply {
             setOnItemClickListener { _, _, position ->
+                typingCorrectionStats.onCandidateSelected(position)
                 rime.launchOnReady { it.selectCandidate(position, global = true) }
             }
             setOnItemLongClickListener { _, view, position ->
