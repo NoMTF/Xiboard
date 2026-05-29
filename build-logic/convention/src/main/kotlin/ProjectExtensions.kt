@@ -75,7 +75,7 @@ val Project.signKeyStoreProps: Properties?
         val name =
             envOrPropOrNull("KEYSTORE_PROPERTIES", "keystoreProperties")
                 ?: "keystore.properties"
-        val file = File(name)
+        val file = rootProject.file(name)
         return if (file.exists()) Properties().apply { load(file.inputStream()) } else null
     }
 
@@ -97,7 +97,7 @@ val Project.signKeyPwd
 val Project.signKeyFile: File?
     get() {
         signKeyStore?.let {
-            val file = File(it)
+            val file = rootProject.file(it)
             if (file.exists()) return file
         }
 

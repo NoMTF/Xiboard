@@ -129,8 +129,8 @@ fallback_colors:
 
 preset_color_schemes:
   default:
-    name: Xiboard #方案名称
-    author: Xiboard #作者信息
+    name: 老习粉蓝 #方案名称
+    author: 老习输入法 #作者信息
     dark_scheme: xiboard_dark
     back_color: 0xf8fbff #候选区背景
     border_color: 0xcbd7e2 #边框
@@ -166,41 +166,41 @@ preset_color_schemes:
     text_back_color: 0xf8fbff #编码区背景
 
   xiboard_dark:
-    name: Xiboard Dark
-    author: Xiboard
+    name: 老习暗色
+    author: 老习输入法
     light_scheme: default
-    back_color: 0x10202b
-    border_color: 0x334a5c
-    candidate_separator_color: 0x334a5c
-    candidate_text_color: 0xe8f5ff
-    comment_text_color: 0xb9c7d3
-    hilited_back_color: 0x29475c
-    hilited_candidate_back_color: 0x5bcefa
-    hilited_candidate_text_color: 0x082033
-    hilited_comment_text_color: 0x29475c
-    hilited_key_back_color: 0x29475c
-    hilited_key_symbol_color: 0xe8f5ff
-    hilited_key_text_color: 0xe8f5ff
-    hilited_off_key_back_color: 0x5f2a3d
+    back_color: 0x101923
+    border_color: 0x385367
+    candidate_separator_color: 0x294254
+    candidate_text_color: 0xf5fbff
+    comment_text_color: 0xbed7e7
+    hilited_back_color: 0x253f54
+    hilited_candidate_back_color: 0x8bdcff
+    hilited_candidate_text_color: 0x061724
+    hilited_comment_text_color: 0x27465c
+    hilited_key_back_color: 0x263f54
+    hilited_key_symbol_color: 0xf5fbff
+    hilited_key_text_color: 0xf5fbff
+    hilited_off_key_back_color: 0x5c2b42
     hilited_off_key_text_color: 0xffd8e7
-    hilited_on_key_back_color: 0xf5a9b8
-    hilited_on_key_text_color: 0x3b1424
+    hilited_on_key_back_color: 0xffb3c7
+    hilited_on_key_text_color: 0x3a1426
     hilited_text_color: 0x9bdcff
-    key_back_color: 0x172c3a
-    key_border_color: 0x29475c
-    key_symbol_color: 0xb9c7d3
-    key_text_color: 0xe8f5ff
-    keyboard_back_color: 0x0c1821
-    label_color: 0xf5a9b8
-    off_key_back_color: 0x3b2430
+    key_back_color: 0x172735
+    key_border_color: 0x294254
+    key_symbol_color: 0xbed7e7
+    key_text_color: 0xf5fbff
+    keyboard_back_color: 0x0b141d
+    label_color: 0xffb3c7
+    off_key_back_color: 0x382332
     off_key_text_color: 0xffd8e7
-    on_key_back_color: 0x5bcefa
-    on_key_text_color: 0x082033
-    preview_back_color: 0x29475c
-    preview_text_color: 0xe8f5ff
+    on_key_back_color: 0x8bdcff
+    on_key_text_color: 0x061724
+    preview_back_color: 0x294254
+    preview_text_color: 0xf5fbff
     shadow_color: 0x00000000
-    text_color: 0xe8f5ff
-    text_back_color: 0x10202b
+    text_color: 0xf5fbff
+    text_back_color: 0x101923
 
   aqua:
     name: 碧水／Aqua
@@ -1193,13 +1193,6 @@ tool_bar:
       padding: 10
     action: liquid_keyboard_emoji
 
-  voice_button: &voice_button
-    foreground:
-      style: "ic@microphone"
-      normal: candidate_text_color
-      padding: 10
-    action: VOICE_ASSIST
-
   clipboard_button: &clipboard_button
     foreground:
       style: "ic@clipboard"
@@ -1223,7 +1216,7 @@ tool_bar:
       padding: 10
     action: Mode_switch
 
-  buttons: [ *hide_button, *emoji_button, *voice_button, *phrase_button, *clipboard_button, *ascii_mode_button ]
+  buttons: [ *hide_button, *emoji_button, *phrase_button, *clipboard_button, *ascii_mode_button ]
 
 preset_keyboards:
   default:

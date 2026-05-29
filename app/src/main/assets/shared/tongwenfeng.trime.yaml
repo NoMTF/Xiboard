@@ -153,8 +153,8 @@ colors:
 #配色方案
 preset_color_schemes:
   default:
-    name: "Xiboard"  #方案名称
-    author: Xiboard #作者信息
+    name: "老习粉蓝"  #方案名称
+    author: 老习输入法 #作者信息
     dark_scheme: xiboard_dark
     back_color: 0xfff8fbff #候选区背景状态栏
     border_color: 0xffcbd7e2 #边框
@@ -207,58 +207,58 @@ preset_color_schemes:
     th4: 0xff20303a #第四行文字颜色
 
   xiboard_dark:
-    name: "Xiboard Dark"
-    author: Xiboard
+    name: "老习暗色"
+    author: 老习输入法
     light_scheme: default
-    back_color: 0xff10202b
-    border_color: 0xff334a5c
-    candidate_separator_color: 0xff334a5c
-    candidate_text_color: 0xffe8f5ff
-    comment_text_color: 0xffb9c7d3
-    hilited_back_color: 0xff29475c
-    hilited_candidate_back_color: 0xff5bcefa
-    hilited_candidate_text_color: 0xff082033
-    hilited_comment_text_color: 0xff29475c
-    hilited_key_back_color: 0xff29475c
-    hilited_key_symbol_color: 0xffe8f5ff
-    hilited_key_text_color: 0xffe8f5ff
-    hilited_off_key_back_color: 0xff5f2a3d
+    back_color: 0xff101923
+    border_color: 0xff385367
+    candidate_separator_color: 0xff294254
+    candidate_text_color: 0xfff5fbff
+    comment_text_color: 0xffbed7e7
+    hilited_back_color: 0xff253f54
+    hilited_candidate_back_color: 0xff8bdcff
+    hilited_candidate_text_color: 0xff061724
+    hilited_comment_text_color: 0xff27465c
+    hilited_key_back_color: 0xff263f54
+    hilited_key_symbol_color: 0xfff5fbff
+    hilited_key_text_color: 0xfff5fbff
+    hilited_off_key_back_color: 0xff5c2b42
     hilited_off_key_text_color: 0xffffd8e7
-    hilited_on_key_back_color: 0xfff5a9b8
-    hilited_on_key_text_color: 0xff3b1424
+    hilited_on_key_back_color: 0xffffb3c7
+    hilited_on_key_text_color: 0xff3a1426
     hilited_text_color: 0xff9bdcff
-    key_back_color: 0xff172c3a
-    key_border_color: 0xff29475c
-    key_symbol_color: 0xffb9c7d3
-    key_text_color: 0xffe8f5ff
-    keyboard_back_color: 0xff0c1821
-    label_color: 0xfff5a9b8
-    off_key_back_color: 0xff3b2430
+    key_back_color: 0xff172735
+    key_border_color: 0xff294254
+    key_symbol_color: 0xffbed7e7
+    key_text_color: 0xfff5fbff
+    keyboard_back_color: 0xff0b141d
+    label_color: 0xffffb3c7
+    off_key_back_color: 0xff382332
     off_key_text_color: 0xffffd8e7
-    on_key_back_color: 0xff5bcefa
-    on_key_text_color: 0xff082033
-    preview_back_color: 0xff29475c
-    preview_text_color: 0xffe8f5ff
-    text_color: 0xffe8f5ff
-    text_back_color: 0xff10202b
-    bkg: 0xff172c3a
-    tkg: 0xffe8f5ff
-    benter: 0xff5bcefa
-    tenter: 0xff082033
-    bgn: 0xff3b2430
+    on_key_back_color: 0xff8bdcff
+    on_key_text_color: 0xff061724
+    preview_back_color: 0xff294254
+    preview_text_color: 0xfff5fbff
+    text_color: 0xfff5fbff
+    text_back_color: 0xff101923
+    bkg: 0xff172735
+    tkg: 0xfff5fbff
+    benter: 0xff8bdcff
+    tenter: 0xff061724
+    bgn: 0xff382332
     tgn: 0xffffd8e7
-    bbs: 0xff3b2430
+    bbs: 0xff382332
     tbs: 0xffffd8e7
-    baoe: 0xff29475c
-    taoe: 0xffe8f5ff
-    bh1: 0xff172c3a
-    th1: 0xffe8f5ff
-    bh2: 0xff172c3a
-    th2: 0xffe8f5ff
-    bh3: 0xff172c3a
-    th3: 0xffe8f5ff
-    bh4: 0xff172c3a
-    th4: 0xffe8f5ff
+    baoe: 0xff24425a
+    taoe: 0xfff5fbff
+    bh1: 0xff172735
+    th1: 0xfff5fbff
+    bh2: 0xff172735
+    th2: 0xfff5fbff
+    bh3: 0xff172735
+    th3: 0xfff5fbff
+    bh4: 0xff172735
+    th4: 0xfff5fbff
 
 #--------配色开始----------------#
   yushe:
@@ -1370,7 +1370,6 @@ tool_bar:
       padding: 10            # 前景内容与背景边界的内边距
     # 按钮点击事件
     action: liquid_keyboard_emoji
-    long_press_action: VOICE_ASSIST
 
   hide_button: &hide_button
     foreground:
@@ -1383,12 +1382,6 @@ tool_bar:
       style: "ic@emoticon"
     # 前景样式可以为空，使用默认样式，按钮将显示为 action 的 label
     action: liquid_keyboard_emoji
-
-  voice_button: &voice_button
-    foreground:
-      style: "ic@microphone"
-      padding: 10
-    action: VOICE_ASSIST
 
   clipboard_button: &clipboard_button
     foreground:
@@ -1420,7 +1413,7 @@ tool_bar:
     action: Zenkaku_Hankaku
 
   # 右侧按钮列表（从右向左排列）
-  buttons: [ *hide_button, *emoji_button, *voice_button, *phrase_button, *clipboard_button, *edit_button, *ascii_mode_button ]
+  buttons: [ *hide_button, *emoji_button, *phrase_button, *clipboard_button, *edit_button, *ascii_mode_button ]
 
 #键盘布局
 preset_keyboards:

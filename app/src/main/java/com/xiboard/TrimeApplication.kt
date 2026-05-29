@@ -165,21 +165,31 @@ class TrimeApplication : Application() {
 
     private fun migrateXiboardDefaults(sharedPreferences: android.content.SharedPreferences) {
         val marker = "xiboard_default_theme_migration_v1"
-        if (sharedPreferences.getBoolean(marker, false)) return
+        if (!sharedPreferences.getBoolean(marker, false)) {
+            val selectedTheme = sharedPreferences.getString(ThemePrefs.SELECTED_THEME, null)
+            val shouldMoveToTongwenfeng =
+                selectedTheme.isNullOrBlank() ||
+                    selectedTheme == "trime" ||
+                    selectedTheme == "default" ||
+                    selectedTheme == "tongwenfeng"
 
-        val selectedTheme = sharedPreferences.getString(ThemePrefs.SELECTED_THEME, null)
-        val shouldMoveToTongwenfeng =
-            selectedTheme.isNullOrBlank() ||
-                selectedTheme == "trime" ||
-                selectedTheme == "default" ||
-                selectedTheme == "tongwenfeng"
-
-        sharedPreferences.edit {
-            if (shouldMoveToTongwenfeng) {
-                putString(ThemePrefs.SELECTED_THEME, ThemePrefs.XIBOARD_DEFAULT_THEME)
-                putString(ThemePrefs.NORMAL_MODE_COLOR, ThemePrefs.XIBOARD_DEFAULT_COLOR)
+            sharedPreferences.edit {
+                if (shouldMoveToTongwenfeng) {
+                    putString(ThemePrefs.SELECTED_THEME, ThemePrefs.XIBOARD_DEFAULT_THEME)
+                    putString(ThemePrefs.NORMAL_MODE_COLOR, ThemePrefs.XIBOARD_DEFAULT_COLOR)
+                }
+                putBoolean(marker, true)
             }
-            putBoolean(marker, true)
+        }
+
+        val dayNightMarker = "xiboard_follow_system_day_night_migration_v1"
+        if (!sharedPreferences.getBoolean(dayNightMarker, false)) {
+            sharedPreferences.edit {
+                if (!sharedPreferences.contains(ThemePrefs.FOLLOW_SYSTEM_DAY_NIGHT)) {
+                    putBoolean(ThemePrefs.FOLLOW_SYSTEM_DAY_NIGHT, true)
+                }
+                putBoolean(dayNightMarker, true)
+            }
         }
     }
 

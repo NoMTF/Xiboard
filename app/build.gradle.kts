@@ -28,8 +28,8 @@ android {
         applicationId = "com.xiboard.inputmethod"
         minSdk = 21
         targetSdk = 35
-        versionCode = 20260502
-        versionName = "3.3.10-xiboard2"
+        versionCode = 20260529
+        versionName = "3.3.11"
 
         multiDexEnabled = true
         buildConfigField("String", "BUILDER", "\"${project.builder}\"")
