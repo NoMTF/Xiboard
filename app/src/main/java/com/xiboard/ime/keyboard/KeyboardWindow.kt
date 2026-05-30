@@ -104,7 +104,33 @@ class KeyboardWindow :
         return config
     }
 
-    private fun attachKeyboard(target: String) {
+    private fun applyKeyboardAsciiMode(
+        keyboard: Keyboard,
+        forcedAsciiMode: Boolean? = null,
+    ) {
+        val currentMode = rime.run { statusCached }.isAsciiMode
+        val targetMode = forcedAsciiMode ?: if (keyboard.resetAsciiMode) {
+            keyboard.asciiMode
+        } else {
+            keyboard.lastAsciiMode
+        }
+
+        if (forcedAsciiMode == false) {
+            keyboard.lastAsciiMode = false
+        }
+
+        if (currentMode != targetMode) {
+            service.postRimeJob {
+                commitComposition()
+                setRuntimeOption("ascii_mode", targetMode)
+            }
+        }
+    }
+
+    private fun attachKeyboard(
+        target: String,
+        forcedAsciiMode: Boolean? = null,
+    ) {
         currentKeyboardId = target
         lastKeyboardId = target
 
@@ -122,15 +148,7 @@ class KeyboardWindow :
             if (it.isLock) lastLockKeyboardId = target
             dispatchCapsState(it::setShifted)
 
-            val currentMode = rime.run { statusCached }.isAsciiMode
-            val targetMode = if (it.resetAsciiMode) it.asciiMode else it.lastAsciiMode
-
-            if (currentMode != targetMode) {
-                service.postRimeJob {
-                    commitComposition()
-                    setRuntimeOption("ascii_mode", targetMode)
-                }
-            }
+            applyKeyboardAsciiMode(it, forcedAsciiMode)
 
             // TODO：为避免过量重构，这里暂时将 currentKeyboard 同步到 KeyboardSwitcher
             KeyboardSwitcher.currentKeyboard = it
@@ -194,14 +212,20 @@ class KeyboardWindow :
         return final
     }
 
-    fun switchKeyboard(to: String) {
+    fun switchKeyboard(
+        to: String,
+        forcedAsciiMode: Boolean? = null,
+    ) {
         val target = evalKeyboard(to)
         ContextCompat.getMainExecutor(service).execute {
             if (cachedKeyboards.containsKey(target)) {
-                if (target == currentKeyboardId) return@execute
+                if (target == currentKeyboardId) {
+                    currentKeyboard?.let { applyKeyboardAsciiMode(it, forcedAsciiMode) }
+                    return@execute
+                }
             }
             detachCurrentView()
-            attachKeyboard(target)
+            attachKeyboard(target, forcedAsciiMode)
         }
         Timber.d("Switched to keyboard: $target")
     }
@@ -241,20 +265,7 @@ class KeyboardWindow :
                     }
                 }
             }
-        switchKeyboard(targetKeyboard)
-        currentKeyboard?.let {
-            val isAsciiMode = rime.run { statusCached }.isAsciiMode
-            if (tempAsciiMode) {
-                if (!isAsciiMode) {
-                    service.postRimeJob { setRuntimeOption("ascii_mode", true) }
-                }
-            } else if (theme.generalStyle.resetAsciiModeOnFocusChange) {
-                val targetMode = if (it.resetAsciiMode) it.asciiMode else it.lastAsciiMode
-                if (isAsciiMode != targetMode) {
-                    service.postRimeJob { setRuntimeOption("ascii_mode", targetMode) }
-                }
-            }
-        }
+        switchKeyboard(targetKeyboard, forcedAsciiMode = tempAsciiMode)
     }
 
     private fun dispatchCapsState(setShift: (Boolean, Boolean) -> Unit) {

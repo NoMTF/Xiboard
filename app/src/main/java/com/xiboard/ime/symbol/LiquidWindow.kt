@@ -36,6 +36,8 @@ class LiquidWindow :
     private val symbolHistory = SymbolHistory(180)
     var currentDataType: LiquidData.Type = LiquidData.Type.SINGLE
         private set
+    var currentTagId: String = ""
+        private set
 
     private val adapter by lazy {
         LiquidAdapter(theme) {
@@ -90,6 +92,7 @@ class LiquidWindow :
     fun setDataByIndex(i: Int) {
         val tag = LiquidData.getTagList()[i]
         currentDataType = tag.type
+        currentTagId = tag.id
         liquidLayout.tabsUi.activateTab(i)
         when (tag.type) {
             LiquidData.Type.HISTORY -> {

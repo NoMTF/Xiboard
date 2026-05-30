@@ -239,6 +239,14 @@ class CommonKeyboardActionListener {
                 }
 
                 if (index >= 0) {
+                    if (
+                        arg == "emoji" &&
+                        windowManager.isAttached(liquidWindow) &&
+                        liquidWindow.currentTagId == "emoji"
+                    ) {
+                        windowManager.attachWindow(KeyboardWindow)
+                        return
+                    }
                     windowManager.attachWindow(LiquidWindow)
                     liquidWindow.setDataByIndex(index)
                 } else {
